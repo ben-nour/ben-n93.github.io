@@ -16,7 +16,7 @@ TIMEZONE = "Australia/Sydney"
 
 DEFAULT_LANG = "en"
 
-DELETE_OUTPUT_DIRECTORY = True 
+DELETE_OUTPUT_DIRECTORY = True
 
 # FAVICON = './content/images/ben_favicon.jpg'
 
@@ -45,7 +45,7 @@ LINKS = (("blog", "https://ben-nour.com/category/blog.html"),)
 
 # Social widget
 SOCIAL = (
-    ("github", "https://github.com/ben-n93"),
+    ("github", "https://github.com/ben-nour"),
     ("twitter", "https://twitter.com/benjamin_nour"),
 )
 

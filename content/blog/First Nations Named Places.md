@@ -93,6 +93,3 @@ First Nations origin you can see it in this column chart:
         <img src="https://ben-nour.com/images/nsw_geographical_places.webp" alt="Bar chart of First Nations named places vs non First Nations named places in NSW, Australia" style="width: 80%; height: auto"/>
     </a>
 </p>
-
-If you want to see the Jupyter Notebook I used for this you can check it out
-in this Github [repo](https://github.com/ben-n93/First_Nations_places_NSW).

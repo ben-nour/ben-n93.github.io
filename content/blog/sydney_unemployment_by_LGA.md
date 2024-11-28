@@ -602,6 +602,5 @@ sydney_lgas_unemployment.sort_values('unemployment_rate').head(1)
 </table>
 </div>
 
-For the source code/Jupyter notebook please see this [Github repo](https://github.com/ben-n93/sydney_unemployment_rate).
-
+You can find the Juypter notebook [here](https://github.com/ben-nour/blog_juypter_notebooks).
 

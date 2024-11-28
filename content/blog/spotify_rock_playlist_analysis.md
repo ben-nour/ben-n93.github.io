@@ -448,4 +448,4 @@ Some interesting insights came out of this analysis, my favourites of which incl
 
 Thanks for reading!
 
-You can find this Jupyter Notebook in this [Github repo](https://github.com/ben-n93/spotify_rock_playlist_analysis).
+You can find the Juypter notebook [here](https://github.com/ben-nour/blog_juypter_notebooks).

@@ -93,3 +93,5 @@ First Nations origin you can see it in this column chart:
         <img src="https://ben-nour.com/images/nsw_geographical_places.webp" alt="Bar chart of First Nations named places vs non First Nations named places in NSW, Australia" style="width: 80%; height: auto"/>
     </a>
 </p>
+
+You can find the Juypter notebook [here](https://github.com/ben-nour/blog_juypter_notebooks).

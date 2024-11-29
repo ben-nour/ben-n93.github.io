@@ -16,18 +16,18 @@ Tags: SQL
 For as long as I've worked as a data analyst I've kept a private Github repository which consists
 solely of a Markdown file with SQL tips and tricks I've learnt - everything from 
 useful features (using `EXCEPT` to find the differences between two data sets) to 
-common pitfalls to be aware of (avoid ambiguity when naming calculated fields).
+steering clear of pitfalls (avoid ambiguity when naming calculated fields).
 
 A couple of months ago I decided to make the repo [public](https://github.com/ben-nour/SQL-tips-and-tricks) and I was surprised (and excited)
 when it went viral.
 
 First it made it to the front page of [Hacker News](https://news.ycombinator.com/):
 
-<img src="{static}/images/hacker_newsletter_sql.png" style="width: 50%; height: auto;" alt="Front page of the Hacker News website">
+<img src="{static}/images/hacker_newsletter_sql.png" alt="Front page of the Hacker News website" style="display: block; margin: auto; width: 50%; height: auto;">
 
 And then it was featured in an issue of the [Data Elixir newsletter](https://dataelixir.com/) (and became the most clicked article of that issue):
 
-<img src="{static}/images/data_elixir_sql_tips.png" style="width: 50%; height: auto;" alt="Issue 503 of the Data Elixir newsletter">
+<img src="{static}/images/data_elixir_sql_tips.png" style="width: 50%; height: auto;" alt="Issue 503 of the Data Elixir newsletter"style="display: block; margin: auto; width: 50%; height: auto;">
 
 And, of course, the stars started coming in:
 

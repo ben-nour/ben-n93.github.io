@@ -25,7 +25,7 @@ posts about sci-fi books :
 
 <p align="center">
     <a href="https://pypi.python.org">
-        <img src="https://ben-nour.com/images/pg_twitter_bot.webp" alt="Twitter-bot" style="width: 60%; height: auto"/>
+        <img src="{static}/images/pg_twitter_bot.webp" alt="Twitter-bot" style="width: 60%; height: auto"/>
     </a>
 </p>
 
@@ -130,7 +130,7 @@ Using our *The Defenders* example from before, here is the cleaned data:
 
 <p align="center">
     <a href="https://pypi.python.org">
-        <img src="https://ben-nour.com/images/twitter_cleaned_data_example.webp" alt="Twitter-bot" style="width: 60%; height: auto"/>
+        <img src="{static}/images/twitter_cleaned_data_example.webp" alt="Twitter-bot" style="width: 60%; height: auto"/>
     </a>
 </p>
 

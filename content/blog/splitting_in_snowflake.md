@@ -21,7 +21,7 @@ The data might look something like this:
 
 <p align="center">
     <a href="">
-        <img src="https://ben-nour.com/images/snowflake-1.webp" alt="A table in Snowflake data warehouse." style="width: 60%; height: auto"/>
+        <img src="{static}images/snowflake-1.webp" alt="A table in Snowflake data warehouse." style="width: 60%; height: auto"/>
     </a>
 </p>
 
@@ -29,7 +29,7 @@ However we want each unique language to be on its own row:
 
 <p align="center">
     <a href="">
-        <img src="https://ben-nour.com/images/snowflake-2.webp" alt="A table in Snowflake data warehouse." style="width: 60%; height: auto"/>
+        <img src="{static}/images/snowflake-2.webp" alt="A table in Snowflake data warehouse." style="width: 60%; height: auto"/>
     </a>
 </p>
 
@@ -105,7 +105,7 @@ And here is our final output:
 
 <p align="center">
     <a href="">
-        <img src="https://ben-nour.com/images/snowflake-2.webp" alt="A table in Snowflake data warehouse." style="width: 60%; height: auto"/>
+        <img src="{static}/images/snowflake-2.webp" alt="A table in Snowflake data warehouse." style="width: 60%; height: auto"/>
     </a>
 </p>
 

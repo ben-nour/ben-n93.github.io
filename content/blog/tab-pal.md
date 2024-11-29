@@ -32,7 +32,7 @@ to manage your custom colour palettes in Tableau.
 Introducing `tab-pal`:
 
 <p align="center">
-    <a href="https://github.com/ben-n93/tab-pal">
+    <a href="https://github.com/ben-nour/tab-pal">
         <img src="https://github.com/ben-n93/tab-pal/assets/84557025/d26de9c5-434e-4299-a35d-e97cb46ae57d" alt="tab-pal-demo">
     </a>
 </p>

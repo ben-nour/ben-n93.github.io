@@ -19,7 +19,7 @@ For example, say I have the following table:
 
 <p align="center">
     <a href="">
-        <img src="https://ben-nour.com/images/tableau_table.webp" alt="Tableau table" style="width: 60%; height: auto"/>
+        <img src="{static}/images/tableau_table.webp" alt="Tableau table" style="width: 60%; height: auto"/>
     </a>
 </p>
 
@@ -29,7 +29,7 @@ Unfortunately dropping the Variance measure on Colour applies it to all columns/
 
 <p align="center">
     <a href="">
-        <img src="https://ben-nour.com/images/tableau-2.webp" alt="Tableau table" style="width: 120%; height: auto"/>
+        <img src="{static}/images/tableau-2.webp" alt="Tableau table" style="width: 120%; height: auto"/>
     </a>
 </p>
 
@@ -39,7 +39,7 @@ Unfortunately dropping the Variance measure on Colour applies it to all columns/
 
 <p align="center">
     <a href="">
-        <img src="https://ben-nour.com/images/tableau-3.gif" alt="Tableau table" style="width: 60%; height: auto"/>
+        <img src="{static}/images/tableau-3.gif" alt="Tableau table" style="width: 60%; height: auto"/>
     </a>
 </p>
 
@@ -47,14 +47,14 @@ Unfortunately dropping the Variance measure on Colour applies it to all columns/
 
 <p align="center">
     <a href="">
-        <img src="https://ben-nour.com/images/tableau-4.webp" alt="Tableau table" style="width: 60%; height: auto"/>
+        <img src="{static}/images/tableau-4.webp" alt="Tableau table" style="width: 60%; height: auto"/>
     </a>
 </p>
 What this does is create a separate colour legend/scale for each column, which you can see on the right side of your screen:
 
 <p align="center">
     <a href="">
-        <img src="https://ben-nour.com/images/tableau-5.webp" alt="Tableau table" style="width: 40%; height: auto"/>
+        <img src="{static}/images/tableau-5.webp" alt="Tableau table" style="width: 40%; height: auto"/>
     </a>
 </p>
 
@@ -63,7 +63,7 @@ What this does is create a separate colour legend/scale for each column, which y
 
 <p align="center">
     <a href="">
-        <img src="https://ben-nour.com/images/tableau-6.webp" alt="Tableau table" style="width: 40%; height: auto"/>
+        <img src="{static}/images/tableau-6.webp" alt="Tableau table" style="width: 40%; height: auto"/>
     </a>
 </p>
 
@@ -73,7 +73,7 @@ To do so click the drop-down menu that currently says ‘Automatic’ and select
 
 <p align="center">
     <a href="">
-        <img src="https://ben-nour.com/images/tableau-7.webp" alt="Tableau table" style="width: 60%; height: auto"/>
+        <img src="{static}/images/tableau-7.webp" alt="Tableau table" style="width: 60%; height: auto"/>
     </a>
 </p>
 
@@ -81,7 +81,7 @@ This will ensure that no matter the value of the column it will be the same colo
 
 <p align="center">
     <a href="">
-        <img src="https://ben-nour.com/images/tableau-8.webp" alt="Tableau table" style="width: 60%; height: auto"/>
+        <img src="{static}/images/tableau-8.webp" alt="Tableau table" style="width: 60%; height: auto"/>
     </a>
 </p>
 
@@ -93,7 +93,7 @@ In this example, let’s use red for any Variance values under 0 and green for a
 
 <p align="center">
     <a href="">
-        <img src="https://ben-nour.com/images/tableau-9.webp" alt="Tableau table" style="width: 60%; height: auto"/>
+        <img src="{static}/images/tableau-9.webp" alt="Tableau table" style="width: 60%; height: auto"/>
     </a>
 </p>
 
@@ -103,7 +103,7 @@ Let’s see how our table looks now:
 
 <p align="center">
     <a href="">
-        <img src="https://ben-nour.com/images/tableau-10.webp" alt="Tableau table" style="width: 60%; height: auto"/>
+        <img src="{static}/images/tableau-10.webp" alt="Tableau table" style="width: 60%; height: auto"/>
     </a>
 </p>
 

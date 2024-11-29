@@ -43,7 +43,6 @@ LINKS = (("blog", "https://ben-nour.com/category/blog.html"),)
 # Social widget
 SOCIAL = (
     ("github", "https://github.com/ben-nour"),
-    ("twitter", "https://twitter.com/benjamin_nour"),
 )
 
 # Theme.

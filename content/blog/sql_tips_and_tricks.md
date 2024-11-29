@@ -23,11 +23,11 @@ when it went viral.
 
 First it made it to the front page of [Hacker News](https://news.ycombinator.com/):
 
-<img src="{static}/hacker_newsletter_sql.png" style="width: 50%; height: auto;" alt="Front page of the Hacker News website">
+<img src="{static}/images/hacker_newsletter_sql.png" style="width: 50%; height: auto;" alt="Front page of the Hacker News website">
 
 And then it was featured in an issue of the [Data Elixir newsletter](https://dataelixir.com/) (and became the most clicked article of that issue):
 
-<img src="{static}/data_elixir_sql_tips.png" style="width: 50%; height: auto;" alt="Issue 503 of the Data Elixir newsletter">
+<img src="{static}/images/data_elixir_sql_tips.png" style="width: 50%; height: auto;" alt="Issue 503 of the Data Elixir newsletter">
 
 And, of course, the stars started coming in:
 

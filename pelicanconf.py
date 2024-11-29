@@ -11,11 +11,8 @@ EXTRA_PATH_METADATA = {
 }
 
 PLUGINS = ["sitemap", "seo"]
-
 TIMEZONE = "Australia/Sydney"
-
 DEFAULT_LANG = "en"
-
 DELETE_OUTPUT_DIRECTORY = True
 
 # FAVICON = './content/images/ben_favicon.jpg'
@@ -35,10 +32,10 @@ AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 
 # SEO
-SEO_REPORT = True  # SEO report is enabled by default
-SEO_ENHANCER = True  # SEO enhancer is disabled by default
-SEO_ENHANCER_OPEN_GRAPH = False  # Subfeature of SEO enhancer
-SEO_ENHANCER_TWITTER_CARDS = False  # Subfeature of SEO enhancer
+SEO_REPORT = True 
+SEO_ENHANCER = True
+SEO_ENHANCER_OPEN_GRAPH = False 
+SEO_ENHANCER_TWITTER_CARDS = False
 
 # Blogroll
 LINKS = (("blog", "https://ben-nour.com/category/blog.html"),)
@@ -52,9 +49,10 @@ SOCIAL = (
 # Theme.
 THEME = "/Users/benjaminnour/Documents/Pelican Themes/Peli-Kiera"
 
-DEFAULT_PAGINATION = 10
-
 # Uncomment following line if you want document-relative URLs when developing
 # RELATIVE_URLS = True
 
+
+# Misc.
+DEFAULT_PAGINATION = 10
 DISQUS_SITENAME = "ben-nour"

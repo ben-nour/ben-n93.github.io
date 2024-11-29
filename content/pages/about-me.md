@@ -23,4 +23,4 @@ You can view some of my projects [<span style="color:#00498F;">here</span>](http
 On my blog I write about all things data, on topics such as [filling in missing dates using SQL](https://ben-nour.com/blog/filling-in-missing-dates-using-sql.html) or
 [applying colour conditional formatting in Tableau](https://ben-nour.com/blog/applying-colour-conditional-formatting-to-individual-table-columns-in-tableau.html).
 
-You can contact me at [<span style="color:#00498F;">hello@ben-nour.com</span>](mailto:hello@ben-nour.com) or via [<span style="color:#00498F;">Twitter</span>](https://twitter.com/benjamin_nour).
+You can contact me at [<span style="color:#00498F;">hello@ben-nour.com</span>](mailto:hello@ben-nour.com). I'm also on [Bluesky](https://bsky.app/profile/ben-nour.bsky.social).

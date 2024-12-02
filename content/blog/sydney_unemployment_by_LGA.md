@@ -21,7 +21,7 @@ Tags: data-analysis, data-visualisation, Python, pandas, geospatial-data
 
 The Australian government's [Jobs and Skills Australia](https://www.jobsandskills.gov.au/engage/about) has an insightful [dataset](https://www.jobsandskills.gov.au/data/small-area-labour-markets) I recently came across - quarterly Small Area Labour Markets (SALM) estimates of unemployment and the unemployment rate, broken out by local government area (LGA).
 
-You can see with the interactive map [here](https://ben-nour.com/sydney_unemployment.html) or at the end of this article.
+I decided to make an interactive map so users can see the different unemployment rates by local government area.
 
 ## How I did it
 

@@ -33,6 +33,6 @@ And, of course, the stars started coming in:
 
 ![Github stars over time of SQL tips and tricks Github repo]({static}/images/star-history-sql-tips.png)
 
-The folks at [/r/SQL](https://www.reddit.com/r/SQL/comments/1fl1fvz/ive_put_together_a_list_of_some_sql_tips_that_i/) and [/r/dataengineering](https://www.reddit.com/r/dataengineering/comments/1fmmtxf/some_sql_tips_and_tricks_i_shared_with_the_folk/) also found it useful, adding their own useful suggestions in the comments thread.
+The folks at [/r/SQL](https://www.reddit.com/r/SQL/comments/1fl1fvz/ive_put_together_a_list_of_some_sql_tips_that_i/) and [/r/dataengineering](https://www.reddit.com/r/dataengineering/comments/1fmmtxf/some_sql_tips_and_tricks_i_shared_with_the_folk/) also found it of interest, adding their own useful suggestions in the comments thread.
 
-I'm pleased so many people found it useful and it was a nice reminder to publish what you know - someone else might just find it useful.
+I'm pleased so many people found it useful and it was a nice reminder to publish what you know - someone else might just find it handy!

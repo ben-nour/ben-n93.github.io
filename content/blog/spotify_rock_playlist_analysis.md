@@ -18,18 +18,15 @@ Since 2015 I've been adding my most-liked rock songs to the aptly named playlist
 
 I thought it'd be fun to use content metadata from Spotify's [Web API](https://developer.spotify.com/documentation/web-api) to learn more about my taste in rock music, such as favourite music era and how often I've added to the playlist over the years.
 
+## Getting the data
+
 
 ```python
 import os
 
 import requests
 import pandas as pd
-```
 
-## Getting the data
-
-
-```python
 # Getting the API access token.
 url = "https://accounts.spotify.com/api/token"
 

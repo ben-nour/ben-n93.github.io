@@ -3,8 +3,8 @@ Date: 2024-04-30
 Description: A command-line app to make it easier and quicker to add and edit custom colour palettes in Tableau.
 Tags: Python, Tableau, data-visualisation, command-line
 
-If you're anything like me most of the time Tableau's in-built colour palettes are more than suitable for the visualisation you're creating.
-That said, I also quite like to create my own custom colour palettes for use in Tableau.
+Most of the time Tableau's in-built colour palettes are more than suitable for the visualisation you're creating.
+That said, I also quite like to create my own custom colour palettes and sometimes a manager might ask that you use your company's official brand colours.
 
 Unfortunately in order to create custom colour palettes in Tableau you have 
 to find your `Preferences.tsp` file and then edit the XML:
@@ -37,7 +37,7 @@ Introducing `tab-pal`:
     </a>
 </p>
 
-`tab-pal` will automatically search for your Preferences.tsp file and prompt you for the path to it.
+`tab-pal` will automatically search for your Preferences.tsp file and prompt you for the path to it if it can't be found.
 
 Alternatively, and what is recommended, is to create an enviromental variable called `TAB_PAL_FILE`, which `tab-pal` will search for on launch. This will ensure you don't need to keep supplying the file path every time you launch `tab-pal`.
 

@@ -86,13 +86,13 @@
 </script>
 <p>Since 2015 I've been adding my most-liked rock songs to the aptly named playlist <em>Favourite Rock</em>.</p>
 <p>I thought it'd be fun to use content metadata from Spotify's <a href="https://developer.spotify.com/documentation/web-api">Web API</a> to learn more about my taste in rock music, such as favourite music era and how often I've added to the playlist over the years.</p>
+<h2>Getting the data</h2>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-</code></pre></div>
-<h2>Getting the data</h2>
-<div class="highlight"><pre><span></span><code><span class="c1"># Getting the API access token.</span>
+
+<span class="c1"># Getting the API access token.</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s2">"https://accounts.spotify.com/api/token"</span>
 
 <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>

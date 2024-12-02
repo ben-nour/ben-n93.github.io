@@ -95,7 +95,7 @@ def _create_coordinates(coordinates, precision):
 ```
 
 Because there are different types of GeoJSON Geometry objects with
-varying levels of nested coordinates I had to use recursion, a technique I hadn't employed before but had fun creating.
+varying levels of nested coordinates I had to use recursion, a technique I hadn't used before but I had fun employing.
 
 For example, you can see the difference between a Point and Polygon objects' coordinates:
 

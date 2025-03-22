@@ -32,12 +32,9 @@ create custom colour palettes in Tableau.
 
 - [<span style="color:#00498F;">Gutenberg Sci-Fi Twitter Bot</span>](https://twitter.com/Gutenberg_SciFi) - a Twitter bot that posts daily recommendations of science fiction books from Project Gutenberg's collection of public domain works.
 
-    - You can read about how I created this project on [my blog](https://ben-nour.com/how-i-created-a-twitter-bot-that-posts-about-science-fiction-books.html#how-i-created-a-twitter-bot-that-posts-about-science-fiction-books).
-
 #### Data analysis
 
-- I have analysed and visualised different data sets, primarily using Juypter Notebooks and the pandas library. Some of my favourite projects include:
+- I like to analyse and visualise datasets. Here's some recent analysis:
 
     - [<span style="color:#00498F;">Which Sydney LGAs have the lowest and highest unemployment rates</span>](https://ben-nour.com/blog/which-sydney-lgas-have-the-lowest-and-highest-unemployment-rates.html)
     - [<span style="color:#00498F;">Using Spotify's API to analyse my Favourite Rock playlist</span>](https://ben-nour.com/blog/using-spotifys-web-api-to-analyse-my-favourite-rock-playlist.html)
-    - [<span style="color:#00498F;">Where are Australia's oil and gas pipelines located?</span>](https://ben-nour.com/blog/where-are-australias-existingproposed-oil-and-gas-pipelines-located.html)

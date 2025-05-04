@@ -21,3 +21,7 @@ codeFences = true
 
 [security]
 enableInlineShortcodes = true
+
+[caches]
+[caches.images]
+dir = ':cacheDir/images'

@@ -27,8 +27,8 @@ create custom colour palettes in Tableau.
 
 - I like to analyse and visualise datasets. Here's some recent analysis:
 
-    - [Which Sydney LGAs have the lowest and highest unemployment rates](https://ben-nour.com/blog/which-sydney-lgas-have-the-lowest-and-highest-unemployment-rates.html)
-    - [Using Spotify's API to analyse my Favourite Rock playlist](https://ben-nour.com/blog/using-spotifys-web-api-to-analyse-my-favourite-rock-playlist.html)
+    - [Which Sydney LGAs have the lowest and highest unemployment rates](https://ben-nour.com/blog/sydney_lgas_unemployment/)
+    - [Using Spotify's API to analyse my Favourite Rock playlist](https://ben-nour.com/blog/spotify_analysis/)
 
 
 #### Database

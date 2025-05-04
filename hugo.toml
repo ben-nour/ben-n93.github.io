@@ -1,0 +1,23 @@
+baseURL = 'https://github.com/ben-nour/ben-n93.github.io'
+theme = 'hugo-bearblog'
+languageCode = 'en-us'
+title = 'Ben Nour'
+author = 'Ben Nour'
+
+enableRobotsTXT = true
+
+[markup]
+[markup.goldmark]
+[markup.goldmark.renderer]
+unsafe = true
+hardWraps = true
+
+[markup.highlight]
+style = 'friendly'
+lineNos = false
+lineNumbersInTable = false
+codeFences = true
+
+
+[security]
+enableInlineShortcodes = true

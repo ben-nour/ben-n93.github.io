@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/ben-nour/ben-n93.github.io/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=ben-nour/ben-n93.github.io/livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Creating custom colour palettes in Tableau from the command-line | Ben Nour</title>
+<meta name="title" content="Creating custom colour palettes in Tableau from the command-line" />
+<meta name="description" content="Why I created a command-line application to create and edit custom colour palettes in Tableau" />
+<meta name="keywords" content="Tableau,Python," />
+
+
+<meta property="og:url" content="http://localhost:1313/ben-nour/ben-n93.github.io/blog/custom-colour-palettes-in-tableau/">
+  <meta property="og:site_name" content="Ben Nour">
+  <meta property="og:title" content="Creating custom colour palettes in Tableau from the command-line">
+  <meta property="og:description" content="Why I created a command-line application to create and edit custom colour palettes in Tableau">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2024-04-30T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-04-30T00:00:00+00:00">
+    <meta property="article:tag" content="Tableau">
+    <meta property="article:tag" content="Python">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Creating custom colour palettes in Tableau from the command-line">
+  <meta name="twitter:description" content="Why I created a command-line application to create and edit custom colour palettes in Tableau">
+
+
+
+
+  <meta itemprop="name" content="Creating custom colour palettes in Tableau from the command-line">
+  <meta itemprop="description" content="Why I created a command-line application to create and edit custom colour palettes in Tableau">
+  <meta itemprop="datePublished" content="2024-04-30T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-04-30T00:00:00+00:00">
+  <meta itemprop="wordCount" content="211">
+  <meta itemprop="keywords" content="Tableau,Python">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+      --width: 720px;
+      --font-main: Verdana, sans-serif;
+      --font-secondary: Verdana, sans-serif;
+      --font-scale: 1em;
+      --background-color: #fff;
+      --heading-color: #222;
+      --text-color: #444;
+      --link-color: #3273dc;
+      --visited-color:  #8b6fcb;
+      --code-background-color: #f2f2f2;
+      --code-color: #222;
+      --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+      :root {
+          --background-color: #01242e;
+          --heading-color: #eee;
+          --text-color: #ddd;
+          --link-color: #8cc2dd;
+          --visited-color:  #8b6fcb;
+          --code-background-color: #000;
+          --code-color: #ddd;
+          --blockquote-color: #ccc;
+      }
+  }
+
+  body {
+      font-family: var(--font-secondary);
+      font-size: var(--font-scale);
+      margin: auto;
+      padding: 20px;
+      max-width: var(--width);
+      text-align: left;
+      background-color: var(--background-color);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      line-height: 1.5;
+      color: var(--text-color);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-main);
+      color: var(--heading-color);
+  }
+
+  a {
+      color: var(--link-color);
+      cursor: pointer;
+      text-decoration: none;
+  }
+
+  a:hover {
+      text-decoration: underline;
+  }
+
+  nav a {
+      margin-right: 8px;
+  }
+
+  strong, b {
+      color: var(--heading-color);
+  }
+
+  button {
+      margin: 0;
+      cursor: pointer;
+  }
+
+  time {
+   	font-family: monospace;
+    	font-style: normal;
+    	font-size: 15px;
+  }
+
+  main {
+      line-height: 1.6;
+  }
+
+  table {
+      width: 100%;
+  }
+
+  hr {
+      border: 0;
+      border-top: 1px dashed;
+  }
+
+  img {
+      max-width: 100%;
+  }
+
+  code {
+      font-family: monospace;
+      padding: 2px;
+      background-color: var(--code-background-color);
+      color: var(--code-color);
+      border-radius: 3px;
+  }
+
+  blockquote {
+      border-left: 1px solid #999;
+      color: var(--code-color);
+      padding-left: 20px;
+      font-style: italic;
+  }
+
+  footer {
+      padding: 25px 0;
+      text-align: center;
+  }
+
+  .title:hover {
+      text-decoration: none;
+  }
+
+  .title h1 {
+      font-size: 1.5em;
+  }
+
+  .inline {
+      width: auto !important;
+  }
+
+  .highlight, .code {
+      padding: 1px 15px;
+      background-color: var(--code-background-color);
+      color: var(--code-color);
+      border-radius: 3px;
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+      list-style-type: none;
+      padding: unset;
+  }
+
+  ul.blog-posts li {
+      display: flex;
+  }
+
+  ul.blog-posts li span {
+      flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+      color: var(--visited-color);
+  }
+</style>
+
+</head>
+
+<body>
+  <header><a href="/ben-nour/ben-n93.github.io/" class="title">
+  <h2>Ben Nour</h2>
+</a>
+<nav><a href="/ben-nour/ben-n93.github.io/">Home</a>
+
+<a href="/ben-nour/ben-n93.github.io/projects/">Projects</a>
+
+
+<a href="/ben-nour/ben-n93.github.io/blog">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Creating custom colour palettes in Tableau from the command-line</h1>
+<p>
+  <i>
+    <time datetime='2024-04-30'>
+      30 Apr, 2024
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>Most of the time Tableau&rsquo;s in-built colour palettes are more than suitable for the visualisation you&rsquo;re creating. That said, I also quite like to create my own custom colour palettes and sometimes a manager might ask that you use your company&rsquo;s official brand colours.</p>
+<p>Unfortunately in order to create custom colour palettes in Tableau you have to find your <code>Preferences.tsp</code> file and then edit the XML:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-XML" data-lang="XML"><span style="display:flex;"><span><span style="color:#007020">&lt;?xml version=&#39;1.0&#39; encoding=&#39;utf-8&#39;?&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#062873;font-weight:bold">&lt;workbook&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#062873;font-weight:bold">&lt;preferences&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#062873;font-weight:bold">&lt;color-palette</span> <span style="color:#4070a0">name=</span><span style="color:#4070a0">&#34;Forest&#34;</span> <span style="color:#4070a0">type=</span><span style="color:#4070a0">&#34;ordered-sequential&#34;</span><span style="color:#062873;font-weight:bold">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#062873;font-weight:bold">&lt;color&gt;</span>#132a13<span style="color:#062873;font-weight:bold">&lt;/color&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#062873;font-weight:bold">&lt;color&gt;</span>#4f772d<span style="color:#062873;font-weight:bold">&lt;/color&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#062873;font-weight:bold">&lt;color&gt;</span>#90a955<span style="color:#062873;font-weight:bold">&lt;/color&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#062873;font-weight:bold">&lt;/color-palette&gt;&lt;/preferences&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#062873;font-weight:bold">&lt;/workbook&gt;</span>
+</span></span></code></pre></div><p>While this might be fine as a one-off, it gets unyieldy if you&rsquo;re constantly having to edit the XML to add or remove colours/palettes.</p>
+<p>So I decided to create a command-line app to make it easier and quicker to manage your custom colour palettes in Tableau.</p>
+<p>Introducing <code>tab-pal</code>:</p>
+<div style="text-align: center;">
+<figure><img src="/images/tabpal.gif">
+</figure>
+
+</div>
+<p><code>tab-pal</code> will automatically search for your <code>Preferences.tsp</code> file and prompt you for the path to it if it can&rsquo;t be found.</p>
+<p>Alternatively, and what is recommended, is to create an enviromental variable called <code>TAB_PAL_FILE</code>, which tab-pal will search for on launch. This will ensure you don&rsquo;t need to keep supplying the file path every time you launch tab-pal.</p>
+<p>You can install via pip (although I recommend pipx so you use it regardless of which virtual environment is or isn&rsquo;t activated).</p>
+<p>And here&rsquo;s the <a href="https://github.com/ben-nour/tab-pal">repo</a>.</p>
+
+</content>
+<p>
+  
+  <a href="http://localhost:1313/ben-nour/ben-n93.github.io/tags/tableau/">#Tableau</a>
+  
+  <a href="http://localhost:1313/ben-nour/ben-n93.github.io/tags/python/">#Python</a>
+  
+</p>
+
+  </main>
+  <footer><small>
+    <a href="mailto:hello@ben-nour.com">Email</a> |
+    <a href="https://github.com/ben-nour">GitHub</a>
+</small></footer>
+
+    
+</body>
+
+</html>

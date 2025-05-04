@@ -1,0 +1,10 @@
++++
+title = "Applying colour conditional formatting to individual table columns in Tableau"
+date = "2023-02-20"
+description="Applying colour conditional formatting to individual table columns in Tableau"
+tags = ["Tableau"]
++++
+
+Do you want to conditionally format one column in a Tableau table but attempting to apply colour to a column applies it to everything?
+
+For example, say I 

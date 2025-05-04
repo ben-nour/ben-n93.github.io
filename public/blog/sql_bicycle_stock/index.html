@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/ben-nour/ben-n93.github.io/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=ben-nour/ben-n93.github.io/livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Using SQL to calculate how often and how many days a store&#39;s inventory is out of stock | Ben Nour</title>
+<meta name="title" content="Using SQL to calculate how often and how many days a store&#39;s inventory is out of stock" />
+<meta name="description" content="Recently a Reddit user posted in r/SQL wanting to know how to calculate
+how often and how many days an item was out of stock.
+I enjoyed coming up with a solution and so I&rsquo;ve decided to write about it in more detail.
+Note that I&rsquo;ll be using Postgres.
+The data
+First, the dataset we&rsquo;ll be operating on:
+
+  
+      
+          item
+          inventory_check_dt
+          inventory_level
+      
+  
+  
+      
+          Bicycle
+          2024-01-10
+          10
+      
+      
+          Bicycle
+          2024-01-15
+          5
+      
+      
+          Bicycle
+          2024-01-16
+          0
+      
+      
+          Bicycle
+          2024-01-20
+          0
+      
+      
+          Bicycle
+          2024-01-23
+          0
+      
+      
+          Bicycle
+          2024-01-25
+          0
+      
+      
+          Bicycle
+          2024-01-28
+          20
+      
+      
+          Bicycle
+          2024-01-29
+          12
+      
+      
+          Bicycle
+          2024-01-31
+          0
+      
+  
+
+Each record in the dataset is when an inventory check is conducted." />
+<meta name="keywords" content="data-analysis,sql," />
+
+
+<meta property="og:url" content="http://localhost:1313/ben-nour/ben-n93.github.io/blog/sql_bicycle_stock/">
+  <meta property="og:site_name" content="Ben Nour">
+  <meta property="og:title" content="Using SQL to calculate how often and how many days a store&#39;s inventory is out of stock">
+  <meta property="og:description" content="Recently a Reddit user posted in r/SQL wanting to know how to calculate
+how often and how many days an item was out of stock.
+I enjoyed coming up with a solution and so I’ve decided to write about it in more detail.
+Note that I’ll be using Postgres.
+The data First, the dataset we’ll be operating on:
+item inventory_check_dt inventory_level Bicycle 2024-01-10 10 Bicycle 2024-01-15 5 Bicycle 2024-01-16 0 Bicycle 2024-01-20 0 Bicycle 2024-01-23 0 Bicycle 2024-01-25 0 Bicycle 2024-01-28 20 Bicycle 2024-01-29 12 Bicycle 2024-01-31 0 Each record in the dataset is when an inventory check is conducted.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2024-07-02T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-07-02T00:00:00+00:00">
+    <meta property="article:tag" content="Data-Analysis">
+    <meta property="article:tag" content="Sql">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Using SQL to calculate how often and how many days a store&#39;s inventory is out of stock">
+  <meta name="twitter:description" content="Recently a Reddit user posted in r/SQL wanting to know how to calculate
+how often and how many days an item was out of stock.
+I enjoyed coming up with a solution and so I’ve decided to write about it in more detail.
+Note that I’ll be using Postgres.
+The data First, the dataset we’ll be operating on:
+item inventory_check_dt inventory_level Bicycle 2024-01-10 10 Bicycle 2024-01-15 5 Bicycle 2024-01-16 0 Bicycle 2024-01-20 0 Bicycle 2024-01-23 0 Bicycle 2024-01-25 0 Bicycle 2024-01-28 20 Bicycle 2024-01-29 12 Bicycle 2024-01-31 0 Each record in the dataset is when an inventory check is conducted.">
+
+
+
+
+  <meta itemprop="name" content="Using SQL to calculate how often and how many days a store&#39;s inventory is out of stock">
+  <meta itemprop="description" content="Recently a Reddit user posted in r/SQL wanting to know how to calculate
+how often and how many days an item was out of stock.
+I enjoyed coming up with a solution and so I’ve decided to write about it in more detail.
+Note that I’ll be using Postgres.
+The data First, the dataset we’ll be operating on:
+item inventory_check_dt inventory_level Bicycle 2024-01-10 10 Bicycle 2024-01-15 5 Bicycle 2024-01-16 0 Bicycle 2024-01-20 0 Bicycle 2024-01-23 0 Bicycle 2024-01-25 0 Bicycle 2024-01-28 20 Bicycle 2024-01-29 12 Bicycle 2024-01-31 0 Each record in the dataset is when an inventory check is conducted.">
+  <meta itemprop="datePublished" content="2024-07-02T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2024-07-02T00:00:00+00:00">
+  <meta itemprop="wordCount" content="767">
+  <meta itemprop="keywords" content="Data-Analysis,Sql">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+      --width: 720px;
+      --font-main: Verdana, sans-serif;
+      --font-secondary: Verdana, sans-serif;
+      --font-scale: 1em;
+      --background-color: #fff;
+      --heading-color: #222;
+      --text-color: #444;
+      --link-color: #3273dc;
+      --visited-color:  #8b6fcb;
+      --code-background-color: #f2f2f2;
+      --code-color: #222;
+      --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+      :root {
+          --background-color: #01242e;
+          --heading-color: #eee;
+          --text-color: #ddd;
+          --link-color: #8cc2dd;
+          --visited-color:  #8b6fcb;
+          --code-background-color: #000;
+          --code-color: #ddd;
+          --blockquote-color: #ccc;
+      }
+  }
+
+  body {
+      font-family: var(--font-secondary);
+      font-size: var(--font-scale);
+      margin: auto;
+      padding: 20px;
+      max-width: var(--width);
+      text-align: left;
+      background-color: var(--background-color);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      line-height: 1.5;
+      color: var(--text-color);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-main);
+      color: var(--heading-color);
+  }
+
+  a {
+      color: var(--link-color);
+      cursor: pointer;
+      text-decoration: none;
+  }
+
+  a:hover {
+      text-decoration: underline;
+  }
+
+  nav a {
+      margin-right: 8px;
+  }
+
+  strong, b {
+      color: var(--heading-color);
+  }
+
+  button {
+      margin: 0;
+      cursor: pointer;
+  }
+
+  time {
+   	font-family: monospace;
+    	font-style: normal;
+    	font-size: 15px;
+  }
+
+  main {
+      line-height: 1.6;
+  }
+
+  table {
+      width: 100%;
+  }
+
+  hr {
+      border: 0;
+      border-top: 1px dashed;
+  }
+
+  img {
+      max-width: 100%;
+  }
+
+  code {
+      font-family: monospace;
+      padding: 2px;
+      background-color: var(--code-background-color);
+      color: var(--code-color);
+      border-radius: 3px;
+  }
+
+  blockquote {
+      border-left: 1px solid #999;
+      color: var(--code-color);
+      padding-left: 20px;
+      font-style: italic;
+  }
+
+  footer {
+      padding: 25px 0;
+      text-align: center;
+  }
+
+  .title:hover {
+      text-decoration: none;
+  }
+
+  .title h1 {
+      font-size: 1.5em;
+  }
+
+  .inline {
+      width: auto !important;
+  }
+
+  .highlight, .code {
+      padding: 1px 15px;
+      background-color: var(--code-background-color);
+      color: var(--code-color);
+      border-radius: 3px;
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+      list-style-type: none;
+      padding: unset;
+  }
+
+  ul.blog-posts li {
+      display: flex;
+  }
+
+  ul.blog-posts li span {
+      flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+      color: var(--visited-color);
+  }
+</style>
+
+</head>
+
+<body>
+  <header><a href="/ben-nour/ben-n93.github.io/" class="title">
+  <h2>Ben Nour</h2>
+</a>
+<nav><a href="/ben-nour/ben-n93.github.io/">Home</a>
+
+<a href="/ben-nour/ben-n93.github.io/projects/">Projects</a>
+
+
+<a href="/ben-nour/ben-n93.github.io/blog">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Using SQL to calculate how often and how many days a store&#39;s inventory is out of stock</h1>
+<p>
+  <i>
+    <time datetime='2024-07-02'>
+      02 Jul, 2024
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>Recently a Reddit user posted in <a href="https://www.reddit.com/r/SQL/">r/SQL</a> wanting to know how to calculate<br>
+how often and how many days an item was out of stock.</p>
+<p>I enjoyed coming up with a solution and so I&rsquo;ve decided to write about it in more detail.</p>
+<p>Note that I&rsquo;ll be using Postgres.</p>
+<h2 id="the-data">The data</h2>
+<p>First, the dataset we&rsquo;ll be operating on:</p>
+<table>
+  <thead>
+      <tr>
+          <th>item</th>
+          <th>inventory_check_dt</th>
+          <th>inventory_level</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-10</td>
+          <td>10</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-15</td>
+          <td>5</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-16</td>
+          <td>0</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-20</td>
+          <td>0</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-23</td>
+          <td>0</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-25</td>
+          <td>0</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-28</td>
+          <td>20</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-29</td>
+          <td>12</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-31</td>
+          <td>0</td>
+      </tr>
+  </tbody>
+</table>
+<p>Each record in the dataset is when an inventory check is conducted.</p>
+<p>Here&rsquo;s the DDL:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-SQL" data-lang="SQL"><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">CREATE</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">TABLE</span><span style="color:#bbb"> </span>stock<span style="color:#bbb"> </span>(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>item<span style="color:#bbb"> </span><span style="color:#007020">VARCHAR</span>(<span style="color:#40a070">50</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>transactioninventory_check_dt_date<span style="color:#bbb"> </span><span style="color:#007020">DATE</span>,<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>inventory_level<span style="color:#bbb"> </span><span style="color:#007020">INT</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>);<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">INSERT</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">INTO</span><span style="color:#bbb"> </span>stock<span style="color:#bbb"> </span>(item,<span style="color:#bbb"> </span>inventory_check_dt,<span style="color:#bbb"> </span>inventory_level)<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">VALUES</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>(<span style="color:#4070a0">&#39;Bicycle&#39;</span>,<span style="color:#bbb"> </span><span style="color:#4070a0">&#39;2024-01-10&#39;</span>,<span style="color:#bbb"> </span><span style="color:#40a070">10</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>(<span style="color:#4070a0">&#39;Bicycle&#39;</span>,<span style="color:#bbb"> </span><span style="color:#4070a0">&#39;2024-01-15&#39;</span>,<span style="color:#bbb"> </span><span style="color:#40a070">5</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>(<span style="color:#4070a0">&#39;Bicycle&#39;</span>,<span style="color:#bbb"> </span><span style="color:#4070a0">&#39;2024-01-16&#39;</span>,<span style="color:#bbb"> </span><span style="color:#40a070">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>(<span style="color:#4070a0">&#39;Bicycle&#39;</span>,<span style="color:#bbb"> </span><span style="color:#4070a0">&#39;2024-01-20&#39;</span>,<span style="color:#bbb"> </span><span style="color:#40a070">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>(<span style="color:#4070a0">&#39;Bicycle&#39;</span>,<span style="color:#bbb"> </span><span style="color:#4070a0">&#39;2024-01-23&#39;</span>,<span style="color:#bbb"> </span><span style="color:#40a070">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>(<span style="color:#4070a0">&#39;Bicycle&#39;</span>,<span style="color:#bbb"> </span><span style="color:#4070a0">&#39;2024-01-25&#39;</span>,<span style="color:#bbb"> </span><span style="color:#40a070">0</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>(<span style="color:#4070a0">&#39;Bicycle&#39;</span>,<span style="color:#bbb"> </span><span style="color:#4070a0">&#39;2024-01-28&#39;</span>,<span style="color:#bbb"> </span><span style="color:#40a070">20</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>(<span style="color:#4070a0">&#39;Bicycle&#39;</span>,<span style="color:#bbb"> </span><span style="color:#4070a0">&#39;2024-01-29&#39;</span>,<span style="color:#bbb"> </span><span style="color:#40a070">12</span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>(<span style="color:#4070a0">&#39;Bicycle&#39;</span>,<span style="color:#bbb"> </span><span style="color:#4070a0">&#39;2024-01-31&#39;</span>,<span style="color:#bbb"> </span><span style="color:#40a070">0</span>)<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>;<span style="color:#bbb">
+</span></span></span></code></pre></div><h2 id="the-problem">The problem</h2>
+<p>We want to find out how often our store was out of stock of bicycles and for how many days.</p>
+<p>We&rsquo;re going to operate on the assumption that when new stock comes in an inventory check is recorded in our table.</p>
+<h3 id="calculating-how-many-times-bicycles-were-sold-out">Calculating how many times bicycles were sold out</h3>
+<p>It&rsquo;s simple enough to verify when an item goes out of stock. There&rsquo;s 0 inventory on hand and when the last inventory check was conducted there was stock.</p>
+<p>Verifying this nicely demonstrates the power of both <code>CASE</code> statements and window functions and how they can be combined to analyse and transform data. In this case we use them to verify both the aformentioned criteria.</p>
+<p>Specifically by utilising the <code>LAG()</code> window function we can look to see how much inventory there was on the previous inventory check date:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-SQL" data-lang="SQL"><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">SELECT</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>item<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>,<span style="color:#bbb"> </span>inventory_check_dt<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>,<span style="color:#bbb"> </span>inventory_level<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>,<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">CASE</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">	</span><span style="color:#007020;font-weight:bold">WHEN</span><span style="color:#bbb"> </span>inventory_level<span style="color:#bbb"> </span><span style="color:#666">!=</span><span style="color:#bbb"> </span><span style="color:#40a070">0</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">THEN</span><span style="color:#bbb"> </span><span style="color:#4070a0">&#39;IN STOCK&#39;</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#007020;font-weight:bold">WHEN</span><span style="color:#bbb"> </span>inventory_level<span style="color:#bbb"> </span><span style="color:#666">=</span><span style="color:#bbb"> </span><span style="color:#40a070">0</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">AND</span><span style="color:#bbb"> </span>LAG(inventory_level,<span style="color:#bbb"> </span><span style="color:#40a070">1</span>)<span style="color:#bbb"> </span>OVER<span style="color:#bbb"> </span>(PARTITION<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">BY</span><span style="color:#bbb"> </span>ITEM<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">ORDER</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">BY</span><span style="color:#bbb"> </span>inventory_check_dt)<span style="color:#bbb"> </span><span style="color:#666">!=</span><span style="color:#bbb"> </span><span style="color:#40a070">0</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">		</span><span style="color:#007020;font-weight:bold">THEN</span><span style="color:#bbb"> </span><span style="color:#4070a0">&#39;OUT_OF_STOCK&#39;</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#007020;font-weight:bold">END</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">AS</span><span style="color:#bbb"> </span>stock_status<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">FROM</span><span style="color:#bbb"> </span>stock<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>;<span style="color:#bbb">
+</span></span></span></code></pre></div><table>
+  <thead>
+      <tr>
+          <th>item</th>
+          <th>inventory_check_dt</th>
+          <th>inventory_level</th>
+          <th>stock_status</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-10</td>
+          <td>10</td>
+          <td>IN STOCK</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-15</td>
+          <td>5</td>
+          <td>IN STOCK</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-16</td>
+          <td>0</td>
+          <td>OUT_OF_STOCK</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-20</td>
+          <td>0</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-23</td>
+          <td>0</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-25</td>
+          <td>0</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-28</td>
+          <td>20</td>
+          <td>IN STOCK</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-29</td>
+          <td>12</td>
+          <td>IN STOCK</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-31</td>
+          <td>0</td>
+          <td>OUT_OF_STOCK</td>
+      </tr>
+  </tbody>
+</table>
+<p>Perfect! We can see that twice bicycles have gone out of stock.</p>
+<h3 id="calculating-how-long-bicycles-were-sold-out">Calculating how long bicycles were sold out</h3>
+<p>Next let&rsquo;s calculate how long bicycles were sold out for.</p>
+<p>All we need to do is calculate the difference in days between when an item was flagged as having gone out of stock and when it next came into stock (or more accurately, when an inventory check was recorded that revealed there was stock).</p>
+<p>Again we&rsquo;ll use a <code>CASE</code> statement but this time with the <code>LEAD()</code> window function to return the next transcation date.</p>
+<p>We&rsquo;ll filter out rows with <code>NULL</code> for the <code>stock_status</code> column so that what will be returned, if it exists, is the next date in which an inventory count is conducted that reveals bicycles are back in stock.</p>
+<p>I&rsquo;ve also wrapped <code>COALESCE()</code> around <code>LEAD()</code> so if there is no next row (meaning bicycles are still out of stock) what&rsquo;s returned is the current date:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-SQL" data-lang="SQL"><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">WITH</span><span style="color:#bbb"> </span>stock_status<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">AS</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">SELECT</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#666">*</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>,<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">CASE</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">	</span><span style="color:#007020;font-weight:bold">WHEN</span><span style="color:#bbb"> </span>inventory_level<span style="color:#bbb"> </span><span style="color:#666">!=</span><span style="color:#bbb"> </span><span style="color:#40a070">0</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">THEN</span><span style="color:#bbb"> </span><span style="color:#4070a0">&#39;IN STOCK&#39;</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#007020;font-weight:bold">WHEN</span><span style="color:#bbb"> </span>inventory_level<span style="color:#bbb"> </span><span style="color:#666">=</span><span style="color:#bbb"> </span><span style="color:#40a070">0</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">AND</span><span style="color:#bbb"> </span>LAG(inventory_level,<span style="color:#bbb"> </span><span style="color:#40a070">1</span>)<span style="color:#bbb"> </span>OVER<span style="color:#bbb"> </span>(PARTITION<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">BY</span><span style="color:#bbb"> </span>item<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">ORDER</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">BY</span><span style="color:#bbb"> </span>inventory_check_dt)<span style="color:#bbb"> </span><span style="color:#666">!=</span><span style="color:#bbb"> </span><span style="color:#40a070">0</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    	</span><span style="color:#007020;font-weight:bold">THEN</span><span style="color:#bbb"> </span><span style="color:#4070a0">&#39;OUT_OF_STOCK&#39;</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#007020;font-weight:bold">END</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">AS</span><span style="color:#bbb"> </span>stock_status<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">FROM</span><span style="color:#bbb"> </span>stock<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>)<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">SELECT</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>item<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>,<span style="color:#bbb"> </span>inventory_check_dt<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>,<span style="color:#bbb"> </span>stock_status<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>,<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">CASE</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">	</span><span style="color:#007020;font-weight:bold">WHEN</span><span style="color:#bbb"> </span>stock_status<span style="color:#bbb"> </span><span style="color:#666">=</span><span style="color:#bbb"> </span><span style="color:#4070a0">&#39;OUT_OF_STOCK&#39;</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">		</span><span style="color:#007020;font-weight:bold">THEN</span><span style="color:#bbb"> </span>COALESCE(LEAD(inventory_check_dt,<span style="color:#bbb"> </span><span style="color:#40a070">1</span>)<span style="color:#bbb"> </span>OVER<span style="color:#bbb"> </span>(PARTITION<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">BY</span><span style="color:#bbb"> </span>ITEM<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">ORDER</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">BY</span><span style="color:#bbb"> </span>inventory_check_dt),<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">CURRENT_DATE</span>)<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">		</span><span style="color:#666">-</span><span style="color:#bbb"> </span>inventory_check_dt<span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#007020;font-weight:bold">END</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">AS</span><span style="color:#bbb"> </span>days_out_of_stock<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">FROM</span><span style="color:#bbb"> </span>stock_status<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">WHERE</span><span style="color:#bbb"> </span>stock_status<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">IS</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">NOT</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">NULL</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>;<span style="color:#bbb">
+</span></span></span></code></pre></div><table>
+  <thead>
+      <tr>
+          <th>item</th>
+          <th>inventory_check_dt</th>
+          <th>stock_status</th>
+          <th>days_out_of_stock</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-10</td>
+          <td>IN STOCK</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-15</td>
+          <td>IN STOCK</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-16</td>
+          <td>OUT_OF_STOCK</td>
+          <td>12</td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-28</td>
+          <td>IN STOCK</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-29</td>
+          <td>IN STOCK</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Bicycle</td>
+          <td>2024-01-31</td>
+          <td>OUT_OF_STOCK</td>
+          <td>246</td>
+      </tr>
+  </tbody>
+</table>
+<p>Perfect!</p>
+<p>We have our answer.</p>
+<p>The Redditor who I helped asked for a single row per item which broke out how many<br>
+times the item was out of stock and for how long (in a comma-seperated string) so let&rsquo;s do that:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-SQL" data-lang="SQL"><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">WITH</span><span style="color:#bbb"> </span>stock_status<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">AS</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">SELECT</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#666">*</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>,<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">CASE</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">	</span><span style="color:#007020;font-weight:bold">WHEN</span><span style="color:#bbb"> </span>inventory_level<span style="color:#bbb"> </span><span style="color:#666">!=</span><span style="color:#bbb"> </span><span style="color:#40a070">0</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">THEN</span><span style="color:#bbb"> </span><span style="color:#4070a0">&#39;IN STOCK&#39;</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span><span style="color:#007020;font-weight:bold">WHEN</span><span style="color:#bbb"> </span>inventory_level<span style="color:#bbb"> </span><span style="color:#666">=</span><span style="color:#bbb"> </span><span style="color:#40a070">0</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">AND</span><span style="color:#bbb"> </span>LAG(inventory_level,<span style="color:#bbb"> </span><span style="color:#40a070">1</span>)<span style="color:#bbb"> </span>OVER<span style="color:#bbb"> </span>(PARTITION<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">BY</span><span style="color:#bbb"> </span>item<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">ORDER</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">BY</span><span style="color:#bbb"> </span>inventory_check_dt)<span style="color:#bbb"> </span><span style="color:#666">!=</span><span style="color:#bbb"> </span><span style="color:#40a070">0</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    	</span><span style="color:#007020;font-weight:bold">THEN</span><span style="color:#bbb"> </span><span style="color:#4070a0">&#39;OUT_OF_STOCK&#39;</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span><span style="color:#007020;font-weight:bold">END</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">AS</span><span style="color:#bbb"> </span>stock_status<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">FROM</span><span style="color:#bbb"> </span>stock<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>),<span style="color:#bbb"> </span>time_calculation<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">AS</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">SELECT</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>item<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>,<span style="color:#bbb"> </span>stock_status<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>,<span style="color:#bbb"> </span>COALESCE(LEAD(inventory_check_dt,<span style="color:#bbb"> </span><span style="color:#40a070">1</span>)<span style="color:#bbb"> </span>OVER<span style="color:#bbb"> </span>(PARTITION<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">BY</span><span style="color:#bbb"> </span>ITEM<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">ORDER</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">BY</span><span style="color:#bbb"> </span>inventory_check_dt),<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">CURRENT_DATE</span>)<span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#666">-</span><span style="color:#bbb"> </span>inventory_check_dt<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">AS</span><span style="color:#bbb"> </span>days_out_of_stock<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">FROM</span><span style="color:#bbb"> </span>stock_status<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">WHERE</span><span style="color:#bbb"> </span>stock_status<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">IS</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">NOT</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">NULL</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>)<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">SELECT</span><span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>item<span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>,<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">COUNT</span>(stock_status)<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">AS</span><span style="color:#bbb"> </span>times_out_of_stock<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>,<span style="color:#bbb"> </span>STRING_AGG(days_out_of_stock::<span style="color:#007020">VARCHAR</span>,<span style="color:#bbb"> </span><span style="color:#4070a0">&#39;,&#39;</span>)<span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">AS</span><span style="color:#bbb"> </span>days_out_of_stock<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">FROM</span><span style="color:#bbb"> </span>time_calculation<span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">WHERE</span><span style="color:#bbb"> </span>stock_status<span style="color:#bbb"> </span><span style="color:#666">=</span><span style="color:#bbb"> </span><span style="color:#4070a0">&#39;OUT_OF_STOCK&#39;</span><span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span><span style="color:#007020;font-weight:bold">GROUP</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">BY</span><span style="color:#bbb"> </span>item<span style="color:#bbb"> 
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>;<span style="color:#bbb">
+</span></span></span></code></pre></div><p>Our final result set:</p>
+<table>
+  <thead>
+      <tr>
+          <th>item</th>
+          <th>times_out_of_stock</th>
+          <th>days_out_of_stock</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Bicycle</td>
+          <td>2</td>
+          <td>12,153</td>
+      </tr>
+  </tbody>
+</table>
+
+</content>
+<p>
+  
+  <a href="http://localhost:1313/ben-nour/ben-n93.github.io/tags/data-analysis/">#Data-Analysis</a>
+  
+  <a href="http://localhost:1313/ben-nour/ben-n93.github.io/tags/sql/">#Sql</a>
+  
+</p>
+
+  </main>
+  <footer><small>
+    <a href="mailto:hello@ben-nour.com">Email</a> |
+    <a href="https://github.com/ben-nour">GitHub</a>
+</small></footer>
+
+    
+</body>
+
+</html>

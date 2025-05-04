@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/ben-nour/ben-n93.github.io/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=ben-nour/ben-n93.github.io/livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Which Sydney LGAs have the lowest and highest unemployment rates? | Ben Nour</title>
+<meta name="title" content="Which Sydney LGAs have the lowest and highest unemployment rates?" />
+<meta name="description" content="The Australian government&rsquo;s Jobs and Skills Australia has an insightful dataset I recently came across - quarterly Small Area Labour Markets (SALM) estimates of unemployment rates, broken out by local government area (LGA).
+I decided to make an interactive map so users can see the different unemployment rates by local government area.
+How I did it
+I sourced a GeoJSON file of Greater Sydney LGAs from UNSW&rsquo;s CityData platform.
+import folium
+import requests
+import pandas as pd
+
+response = requests.get(&#34;https://staging.citydata.be.unsw.edu.au/geoserver/geonode/ows?service=WFS&amp;version=1.0.0&amp;request=GetFeature&amp;typeName=geonode:LGAs_Sydney_and_surrounds&amp;outputFormat=application%2Fjson&#34;)
+geojson = response.json()
+There was some typical data cleaning that I needed to apply to the unemployment dataset (making more readable column headers, converting the data type)." />
+<meta name="keywords" content="data-analysis,pandas,python," />
+
+
+<meta property="og:url" content="http://localhost:1313/ben-nour/ben-n93.github.io/blog/sydney_lgas_unemployment/">
+  <meta property="og:site_name" content="Ben Nour">
+  <meta property="og:title" content="Which Sydney LGAs have the lowest and highest unemployment rates?">
+  <meta property="og:description" content="The Australian government’s Jobs and Skills Australia has an insightful dataset I recently came across - quarterly Small Area Labour Markets (SALM) estimates of unemployment rates, broken out by local government area (LGA).
+I decided to make an interactive map so users can see the different unemployment rates by local government area.
+How I did it I sourced a GeoJSON file of Greater Sydney LGAs from UNSW’s CityData platform.
+import folium import requests import pandas as pd response = requests.get(&#34;https://staging.citydata.be.unsw.edu.au/geoserver/geonode/ows?service=WFS&amp;version=1.0.0&amp;request=GetFeature&amp;typeName=geonode:LGAs_Sydney_and_surrounds&amp;outputFormat=application%2Fjson&#34;) geojson = response.json() There was some typical data cleaning that I needed to apply to the unemployment dataset (making more readable column headers, converting the data type).">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2023-11-16T00:00:00+00:00">
+    <meta property="article:modified_time" content="2023-11-16T00:00:00+00:00">
+    <meta property="article:tag" content="Data-Analysis">
+    <meta property="article:tag" content="Pandas">
+    <meta property="article:tag" content="Python">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Which Sydney LGAs have the lowest and highest unemployment rates?">
+  <meta name="twitter:description" content="The Australian government’s Jobs and Skills Australia has an insightful dataset I recently came across - quarterly Small Area Labour Markets (SALM) estimates of unemployment rates, broken out by local government area (LGA).
+I decided to make an interactive map so users can see the different unemployment rates by local government area.
+How I did it I sourced a GeoJSON file of Greater Sydney LGAs from UNSW’s CityData platform.
+import folium import requests import pandas as pd response = requests.get(&#34;https://staging.citydata.be.unsw.edu.au/geoserver/geonode/ows?service=WFS&amp;version=1.0.0&amp;request=GetFeature&amp;typeName=geonode:LGAs_Sydney_and_surrounds&amp;outputFormat=application%2Fjson&#34;) geojson = response.json() There was some typical data cleaning that I needed to apply to the unemployment dataset (making more readable column headers, converting the data type).">
+
+
+
+
+  <meta itemprop="name" content="Which Sydney LGAs have the lowest and highest unemployment rates?">
+  <meta itemprop="description" content="The Australian government’s Jobs and Skills Australia has an insightful dataset I recently came across - quarterly Small Area Labour Markets (SALM) estimates of unemployment rates, broken out by local government area (LGA).
+I decided to make an interactive map so users can see the different unemployment rates by local government area.
+How I did it I sourced a GeoJSON file of Greater Sydney LGAs from UNSW’s CityData platform.
+import folium import requests import pandas as pd response = requests.get(&#34;https://staging.citydata.be.unsw.edu.au/geoserver/geonode/ows?service=WFS&amp;version=1.0.0&amp;request=GetFeature&amp;typeName=geonode:LGAs_Sydney_and_surrounds&amp;outputFormat=application%2Fjson&#34;) geojson = response.json() There was some typical data cleaning that I needed to apply to the unemployment dataset (making more readable column headers, converting the data type).">
+  <meta itemprop="datePublished" content="2023-11-16T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2023-11-16T00:00:00+00:00">
+  <meta itemprop="wordCount" content="725">
+  <meta itemprop="keywords" content="Data-Analysis,Pandas,Python">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+      --width: 720px;
+      --font-main: Verdana, sans-serif;
+      --font-secondary: Verdana, sans-serif;
+      --font-scale: 1em;
+      --background-color: #fff;
+      --heading-color: #222;
+      --text-color: #444;
+      --link-color: #3273dc;
+      --visited-color:  #8b6fcb;
+      --code-background-color: #f2f2f2;
+      --code-color: #222;
+      --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+      :root {
+          --background-color: #01242e;
+          --heading-color: #eee;
+          --text-color: #ddd;
+          --link-color: #8cc2dd;
+          --visited-color:  #8b6fcb;
+          --code-background-color: #000;
+          --code-color: #ddd;
+          --blockquote-color: #ccc;
+      }
+  }
+
+  body {
+      font-family: var(--font-secondary);
+      font-size: var(--font-scale);
+      margin: auto;
+      padding: 20px;
+      max-width: var(--width);
+      text-align: left;
+      background-color: var(--background-color);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      line-height: 1.5;
+      color: var(--text-color);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-main);
+      color: var(--heading-color);
+  }
+
+  a {
+      color: var(--link-color);
+      cursor: pointer;
+      text-decoration: none;
+  }
+
+  a:hover {
+      text-decoration: underline;
+  }
+
+  nav a {
+      margin-right: 8px;
+  }
+
+  strong, b {
+      color: var(--heading-color);
+  }
+
+  button {
+      margin: 0;
+      cursor: pointer;
+  }
+
+  time {
+   	font-family: monospace;
+    	font-style: normal;
+    	font-size: 15px;
+  }
+
+  main {
+      line-height: 1.6;
+  }
+
+  table {
+      width: 100%;
+  }
+
+  hr {
+      border: 0;
+      border-top: 1px dashed;
+  }
+
+  img {
+      max-width: 100%;
+  }
+
+  code {
+      font-family: monospace;
+      padding: 2px;
+      background-color: var(--code-background-color);
+      color: var(--code-color);
+      border-radius: 3px;
+  }
+
+  blockquote {
+      border-left: 1px solid #999;
+      color: var(--code-color);
+      padding-left: 20px;
+      font-style: italic;
+  }
+
+  footer {
+      padding: 25px 0;
+      text-align: center;
+  }
+
+  .title:hover {
+      text-decoration: none;
+  }
+
+  .title h1 {
+      font-size: 1.5em;
+  }
+
+  .inline {
+      width: auto !important;
+  }
+
+  .highlight, .code {
+      padding: 1px 15px;
+      background-color: var(--code-background-color);
+      color: var(--code-color);
+      border-radius: 3px;
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+      list-style-type: none;
+      padding: unset;
+  }
+
+  ul.blog-posts li {
+      display: flex;
+  }
+
+  ul.blog-posts li span {
+      flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+      color: var(--visited-color);
+  }
+</style>
+
+</head>
+
+<body>
+  <header><a href="/ben-nour/ben-n93.github.io/" class="title">
+  <h2>Ben Nour</h2>
+</a>
+<nav><a href="/ben-nour/ben-n93.github.io/">Home</a>
+
+<a href="/ben-nour/ben-n93.github.io/projects/">Projects</a>
+
+
+<a href="/ben-nour/ben-n93.github.io/blog">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Which Sydney LGAs have the lowest and highest unemployment rates?</h1>
+<p>
+  <i>
+    <time datetime='2023-11-16'>
+      16 Nov, 2023
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>The Australian government&rsquo;s <a href="https://www.jobsandskills.gov.au/engage/about">Jobs and Skills Australia</a> has an insightful <a href="https://www.jobsandskills.gov.au/data/small-area-labour-markets">dataset</a> I recently came across - quarterly Small Area Labour Markets (SALM) estimates of unemployment rates, broken out by local government area (LGA).</p>
+<p>I decided to make an interactive map so users can see the different unemployment rates by local government area.</p>
+<h2 id="how-i-did-it">How I did it</h2>
+<p>I sourced a <a href="https://citydata.be.unsw.edu.au/dataset/lgas_sydney_and_surrounds/resource/75080649-cd92-4923-bf71-63c81e5c57ba">GeoJSON file</a> of Greater Sydney LGAs from UNSW&rsquo;s <a href="https://citydata.be.unsw.edu.au/">CityData</a> platform.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">folium</span>
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">requests</span>
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">import</span> <span style="color:#0e84b5;font-weight:bold">pandas</span> <span style="color:#007020;font-weight:bold">as</span> <span style="color:#0e84b5;font-weight:bold">pd</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>response <span style="color:#666">=</span> requests<span style="color:#666">.</span>get(<span style="color:#4070a0">&#34;https://staging.citydata.be.unsw.edu.au/geoserver/geonode/ows?service=WFS&amp;version=1.0.0&amp;request=GetFeature&amp;typeName=geonode:LGAs_Sydney_and_surrounds&amp;outputFormat=application</span><span style="color:#70a0d0">%2F</span><span style="color:#4070a0">json&#34;</span>)
+</span></span><span style="display:flex;"><span>geojson <span style="color:#666">=</span> response<span style="color:#666">.</span>json()
+</span></span></code></pre></div><p>There was some typical data cleaning that I needed to apply to the unemployment dataset (making more readable column headers, converting the data type).</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>df <span style="color:#666">=</span> pd<span style="color:#666">.</span>read_csv(<span style="color:#4070a0">&#39;unemployment.csv&#39;</span>)
+</span></span><span style="display:flex;"><span>df <span style="color:#666">=</span> df[[<span style="color:#4070a0">&#39;Data item&#39;</span>, <span style="color:#4070a0">&#39;Local Government Area (LGA) (2023 ASGS)&#39;</span>, <span style="color:#4070a0">&#39;Jun-23&#39;</span>]]
+</span></span><span style="display:flex;"><span>df <span style="color:#666">=</span> df<span style="color:#666">.</span>query(<span style="color:#4070a0">&#34;`Data item` == &#39;Smoothed unemployment rate (%)&#39;&#34;</span>)
+</span></span><span style="display:flex;"><span>df <span style="color:#666">=</span> df<span style="color:#666">.</span>rename(columns<span style="color:#666">=</span>{<span style="color:#4070a0">&#39;Local Government Area (LGA) (2023 ASGS)&#39;</span>:<span style="color:#4070a0">&#39;LGA&#39;</span>, <span style="color:#4070a0">&#39;Jun-23&#39;</span>:<span style="color:#4070a0">&#39;unemployment_rate&#39;</span>})
+</span></span><span style="display:flex;"><span>df[<span style="color:#4070a0">&#39;unemployment_rate&#39;</span>] <span style="color:#666">=</span> pd<span style="color:#666">.</span>to_numeric(df[<span style="color:#4070a0">&#39;unemployment_rate&#39;</span>], errors<span style="color:#666">=</span><span style="color:#4070a0">&#39;coerce&#39;</span>)
+</span></span></code></pre></div><p>But the big issue was that unfortunately not all the LGA names in the CSV matched the LGA names in the GeoJSON file so I had manually updated these records to reflect the naming used in the GeoJSON file.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Printing the names of the LGAs in the GeoJSON file.</span>
+</span></span><span style="display:flex;"><span>lgas <span style="color:#666">=</span> []
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">for</span> number <span style="color:#007020;font-weight:bold">in</span> <span style="color:#007020">range</span>(<span style="color:#40a070">0</span>, <span style="color:#007020">len</span>(geojson[<span style="color:#4070a0">&#39;features&#39;</span>])):
+</span></span><span style="display:flex;"><span>    lga <span style="color:#666">=</span> geojson[<span style="color:#4070a0">&#39;features&#39;</span>][number][<span style="color:#4070a0">&#39;properties&#39;</span>][<span style="color:#4070a0">&#39;NSW_LGA__3&#39;</span>]
+</span></span><span style="display:flex;"><span>    lgas<span style="color:#666">.</span>append(lga)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>lgas <span style="color:#666">=</span> <span style="color:#007020">list</span>(<span style="color:#007020">set</span>(lgas))
+</span></span><span style="display:flex;"><span>geojson_lgas <span style="color:#666">=</span> pd<span style="color:#666">.</span>Series(lgas)
+</span></span><span style="display:flex;"><span>geojson_lgas<span style="color:#666">.</span>name <span style="color:#666">=</span> <span style="color:#4070a0">&#39;LGA&#39;</span>
+</span></span><span style="display:flex;"><span>geojson_lgas
+</span></span></code></pre></div><pre><code>0         SUTHERLAND SHIRE
+1                  BURWOOD
+2                LANE COVE
+3               WILLOUGHBY
+4               INNER WEST
+5              STRATHFIELD
+6               CUMBERLAND
+7           UNINCORPORATED
+8                 WAVERLEY
+9                  BAYSIDE
+10              HAWKESBURY
+11                  CAMDEN
+12             WOLLONDILLY
+13            CAMPBELLTOWN
+14               LIVERPOOL
+15          BLUE MOUNTAINS
+16               FAIRFIELD
+17             KU-RING-GAI
+18              CANADA BAY
+19                 PENRITH
+20                 HORNSBY
+21                    RYDE
+22         THE HILLS SHIRE
+23                  SYDNEY
+24           CENTRAL COAST
+25        NORTHERN BEACHES
+26    CANTERBURY-BANKSTOWN
+27            NORTH SYDNEY
+28            HUNTERS HILL
+29                  MOSMAN
+30                RANDWICK
+31               BLACKTOWN
+32           GEORGES RIVER
+33               WOOLLAHRA
+34              PARRAMATTA
+Name: LGA, dtype: object
+</code></pre>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Updating LGA names in the unemployment DataFrame.</span>
+</span></span><span style="display:flex;"><span>df[<span style="color:#4070a0">&#39;LGA&#39;</span>] <span style="color:#666">=</span> df[<span style="color:#4070a0">&#39;LGA&#39;</span>]<span style="color:#666">.</span>str<span style="color:#666">.</span>upper()
+</span></span><span style="display:flex;"><span>df<span style="color:#666">.</span>at[<span style="color:#40a070">1107</span>, <span style="color:#4070a0">&#39;LGA&#39;</span>] <span style="color:#666">=</span> <span style="color:#4070a0">&#39;CAMPBELLTOWN&#39;</span>
+</span></span><span style="display:flex;"><span>df<span style="color:#666">.</span>at[<span style="color:#40a070">1195</span>, <span style="color:#4070a0">&#39;LGA&#39;</span>] <span style="color:#666">=</span> <span style="color:#4070a0">&#39;THE HILLS SHIRE&#39;</span>
+</span></span><span style="display:flex;"><span>df<span style="color:#666">.</span>at[<span style="color:#40a070">1091</span>, <span style="color:#4070a0">&#39;LGA&#39;</span>] <span style="color:#666">=</span> <span style="color:#4070a0">&#39;BAYSIDE&#39;</span>
+</span></span><span style="display:flex;"><span>df<span style="color:#666">.</span>at[<span style="color:#40a070">1190</span>, <span style="color:#4070a0">&#39;LGA&#39;</span>] <span style="color:#666">=</span> <span style="color:#4070a0">&#39;SUTHERLAND SHIRE&#39;</span>
+</span></span><span style="display:flex;"><span>df<span style="color:#666">.</span>at[<span style="color:#40a070">1111</span>, <span style="color:#4070a0">&#39;LGA&#39;</span>] <span style="color:#666">=</span> <span style="color:#4070a0">&#39;CENTRAL COAST&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>df
+</span></span></code></pre></div><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+<p></style></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Data item</th>
+      <th>LGA</th>
+      <th>unemployment_rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1086</th>
+      <td>Smoothed unemployment rate (%)</td>
+      <td>ALBURY</td>
+      <td>4.5</td>
+    </tr>
+    <tr>
+      <th>1087</th>
+      <td>Smoothed unemployment rate (%)</td>
+      <td>ARMIDALE</td>
+      <td>2.8</td>
+    </tr>
+    <tr>
+      <th>1088</th>
+      <td>Smoothed unemployment rate (%)</td>
+      <td>BALLINA</td>
+      <td>1.7</td>
+    </tr>
+    <tr>
+      <th>1089</th>
+      <td>Smoothed unemployment rate (%)</td>
+      <td>BALRANALD</td>
+      <td>1.8</td>
+    </tr>
+    <tr>
+      <th>1090</th>
+      <td>Smoothed unemployment rate (%)</td>
+      <td>BATHURST</td>
+      <td>1.6</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1624</th>
+      <td>Smoothed unemployment rate (%)</td>
+      <td>WAGAIT</td>
+      <td>2.3</td>
+    </tr>
+    <tr>
+      <th>1625</th>
+      <td>Smoothed unemployment rate (%)</td>
+      <td>WEST ARNHEM</td>
+      <td>9.3</td>
+    </tr>
+    <tr>
+      <th>1626</th>
+      <td>Smoothed unemployment rate (%)</td>
+      <td>WEST DALY</td>
+      <td>13.0</td>
+    </tr>
+    <tr>
+      <th>1627</th>
+      <td>Smoothed unemployment rate (%)</td>
+      <td>UNINCORPORATED NT</td>
+      <td>5.2</td>
+    </tr>
+    <tr>
+      <th>1628</th>
+      <td>Smoothed unemployment rate (%)</td>
+      <td>UNINCORPORATED ACT</td>
+      <td>3.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>543 rows × 3 columns</p>
+</div>
+<p>I also needed to modify and recreate the GeoJSON file, to:</p>
+<ul>
+<li>
+<p>Add the unemployment rate to the properties of each Feature so the data can be passed to a tooltip popup in the map.</p>
+</li>
+<li>
+<p>Remove suburbs not in Greater Sydney (this dataset includes surrounding LGAs like Hawkesbury and Central Coast).</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Setting the index on the unemployment DataFrame to LGA in order to pass the unemployment rate</span>
+</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># to the GeoJSON properties.</span>
+</span></span><span style="display:flex;"><span>df[<span style="color:#4070a0">&#39;LGA_index&#39;</span>] <span style="color:#666">=</span> df[<span style="color:#4070a0">&#39;LGA&#39;</span>]
+</span></span><span style="display:flex;"><span>df <span style="color:#666">=</span> df<span style="color:#666">.</span>set_index(<span style="color:#4070a0">&#39;LGA_index&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>new_geojson <span style="color:#666">=</span> {<span style="color:#4070a0">&#39;type&#39;</span>:<span style="color:#4070a0">&#39;FeatureCollection&#39;</span>}
+</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Creating a new GeoJSON file consisiting of only Greater Sydney suburbs</span>
+</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># and adding unemployment_rate to the Feature properties.</span>
+</span></span><span style="display:flex;"><span>features <span style="color:#666">=</span> []
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">for</span> feature <span style="color:#007020;font-weight:bold">in</span> geojson[<span style="color:#4070a0">&#39;features&#39;</span>]:
+</span></span><span style="display:flex;"><span>    <span style="color:#007020;font-weight:bold">if</span> (feature_lga<span style="color:#666">:=</span> feature[<span style="color:#4070a0">&#39;properties&#39;</span>][<span style="color:#4070a0">&#39;NSW_LGA__3&#39;</span>]) <span style="color:#007020;font-weight:bold">not</span> <span style="color:#007020;font-weight:bold">in</span> (<span style="color:#4070a0">&#39;UNINCORPORATED&#39;</span>, <span style="color:#4070a0">&#39;CENTRAL COAST&#39;</span>, <span style="color:#4070a0">&#39;BLUE MOUNTAINS&#39;</span>, <span style="color:#4070a0">&#39;WOLLONDILLY&#39;</span>, <span style="color:#4070a0">&#39;HAWKESBURY&#39;</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#007020;font-weight:bold">try</span>:
+</span></span><span style="display:flex;"><span>            unemployment_rate <span style="color:#666">=</span> df<span style="color:#666">.</span>at[feature_lga, <span style="color:#4070a0">&#39;unemployment_rate&#39;</span>]
+</span></span><span style="display:flex;"><span>            unemployment_rate <span style="color:#666">=</span> <span style="color:#007020">str</span>(unemployment_rate) <span style="color:#666">+</span> <span style="color:#4070a0">&#39;%&#39;</span>
+</span></span><span style="display:flex;"><span>            feature[<span style="color:#4070a0">&#39;properties&#39;</span>][<span style="color:#4070a0">&#39;unemployment_rate&#39;</span>] <span style="color:#666">=</span> unemployment_rate
+</span></span><span style="display:flex;"><span>            features<span style="color:#666">.</span>append(feature)
+</span></span><span style="display:flex;"><span>        <span style="color:#007020;font-weight:bold">except</span> <span style="color:#007020">KeyError</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#007020;font-weight:bold">pass</span>
+</span></span><span style="display:flex;"><span>new_geojson[<span style="color:#4070a0">&#39;features&#39;</span>] <span style="color:#666">=</span> features
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>lgas <span style="color:#666">=</span> []
+</span></span><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">for</span> number <span style="color:#007020;font-weight:bold">in</span> <span style="color:#007020">range</span>(<span style="color:#40a070">0</span>, <span style="color:#007020">len</span>(new_geojson[<span style="color:#4070a0">&#39;features&#39;</span>])):
+</span></span><span style="display:flex;"><span>    lga <span style="color:#666">=</span> new_geojson[<span style="color:#4070a0">&#39;features&#39;</span>][number][<span style="color:#4070a0">&#39;properties&#39;</span>][<span style="color:#4070a0">&#39;NSW_LGA__3&#39;</span>]
+</span></span><span style="display:flex;"><span>    lgas<span style="color:#666">.</span>append(lga)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Creating a Series object from the new GeoJSON file.</span>
+</span></span><span style="display:flex;"><span>lgas <span style="color:#666">=</span> <span style="color:#007020">list</span>(<span style="color:#007020">set</span>(lgas))
+</span></span><span style="display:flex;"><span>geojson_lgas <span style="color:#666">=</span> pd<span style="color:#666">.</span>Series(lgas)
+</span></span><span style="display:flex;"><span>geojson_lgas<span style="color:#666">.</span>name <span style="color:#666">=</span> <span style="color:#4070a0">&#39;LGA&#39;</span>
+</span></span></code></pre></div><p>Finally I just had to inner join the two DataFrames to filter out LGAs that aren&rsquo;t in Sydney and then I could create the map!</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sydney_lgas_unemployment <span style="color:#666">=</span> pd<span style="color:#666">.</span>merge(geojson_lgas, df, left_on<span style="color:#666">=</span><span style="color:#4070a0">&#34;LGA&#34;</span>, right_on<span style="color:#666">=</span><span style="color:#4070a0">&#34;LGA&#34;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>m <span style="color:#666">=</span> folium<span style="color:#666">.</span>Map(location<span style="color:#666">=</span>[<span style="color:#666">-</span><span style="color:#40a070">33.8688</span>, <span style="color:#40a070">151.2093</span>], zoom_start<span style="color:#666">=</span><span style="color:#40a070">9.5</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>choropleth <span style="color:#666">=</span> folium<span style="color:#666">.</span>Choropleth(
+</span></span><span style="display:flex;"><span>    geo_data<span style="color:#666">=</span>new_geojson,
+</span></span><span style="display:flex;"><span>    data<span style="color:#666">=</span>sydney_lgas_unemployment,
+</span></span><span style="display:flex;"><span>    columns<span style="color:#666">=</span>[<span style="color:#4070a0">&#34;LGA&#34;</span>, <span style="color:#4070a0">&#34;unemployment_rate&#34;</span>],
+</span></span><span style="display:flex;"><span>    key_on<span style="color:#666">=</span><span style="color:#4070a0">&#34;feature.properties.NSW_LGA__3&#34;</span>,
+</span></span><span style="display:flex;"><span>    fill_opacity<span style="color:#666">=</span><span style="color:#40a070">0.7</span>,
+</span></span><span style="display:flex;"><span>    line_weight<span style="color:#666">=</span><span style="color:#40a070">2</span>,
+</span></span><span style="display:flex;"><span>    fill_color<span style="color:#666">=</span><span style="color:#4070a0">&#34;YlOrRd&#34;</span>,
+</span></span><span style="display:flex;"><span>    highlight<span style="color:#666">=</span><span style="color:#007020;font-weight:bold">True</span>,
+</span></span><span style="display:flex;"><span>    legend_name<span style="color:#666">=</span><span style="color:#4070a0">&#34;Unemployment rate %&#34;</span>
+</span></span><span style="display:flex;"><span>)<span style="color:#666">.</span>add_to(m)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>tooltip <span style="color:#666">=</span> folium<span style="color:#666">.</span>GeoJsonTooltip(fields<span style="color:#666">=</span>[<span style="color:#4070a0">&#34;NSW_LGA__3&#34;</span>, <span style="color:#4070a0">&#34;unemployment_rate&#34;</span>], aliases<span style="color:#666">=</span>[<span style="color:#4070a0">&#34;LGA&#34;</span>, <span style="color:#4070a0">&#34;Unemployment rate&#34;</span>])
+</span></span><span style="display:flex;"><span>choropleth<span style="color:#666">.</span>geojson<span style="color:#666">.</span>add_child(tooltip)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>m<span style="color:#666">.</span>save(<span style="color:#4070a0">&#39;sydney_unemployment.html&#39;</span>)
+</span></span><span style="display:flex;"><span>m
+</span></span></code></pre></div><iframe src="/custom/sydney_lga_map.html" width="100%" height="500px"></iframe>
+<p>If you hover over the LGA you can see the name of the council as well as the unemployment rate.</p>
+<p>As you can see, Fairfield has the highest unemployment rate and Camden has the lowest unemployment rate.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sydney_lgas_unemployment<span style="color:#666">.</span>sort_values(<span style="color:#4070a0">&#39;unemployment_rate&#39;</span>)<span style="color:#666">.</span>tail(<span style="color:#40a070">1</span>)
+</span></span></code></pre></div><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+<p></style></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>LGA</th>
+      <th>Data item</th>
+      <th>unemployment_rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>12</th>
+      <td>FAIRFIELD</td>
+      <td>Smoothed unemployment rate (%)</td>
+      <td>7.2</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>sydney_lgas_unemployment<span style="color:#666">.</span>sort_values(<span style="color:#4070a0">&#39;unemployment_rate&#39;</span>)<span style="color:#666">.</span>head(<span style="color:#40a070">1</span>)
+</span></span></code></pre></div><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre><code>.dataframe tbody tr th {
+    vertical-align: top;
+}
+
+.dataframe thead th {
+    text-align: right;
+}
+</code></pre>
+<p></style></p>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>LGA</th>
+      <th>Data item</th>
+      <th>unemployment_rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>9</th>
+      <td>CAMDEN</td>
+      <td>Smoothed unemployment rate (%)</td>
+      <td>1.7</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>You can find the Juypter notebook <a href="https://github.com/ben-nour/blog_juypter_notebooks">here</a>.</p>
+
+</content>
+<p>
+  
+  <a href="http://localhost:1313/ben-nour/ben-n93.github.io/tags/data-analysis/">#Data-Analysis</a>
+  
+  <a href="http://localhost:1313/ben-nour/ben-n93.github.io/tags/pandas/">#Pandas</a>
+  
+  <a href="http://localhost:1313/ben-nour/ben-n93.github.io/tags/python/">#Python</a>
+  
+</p>
+
+  </main>
+  <footer><small>
+    <a href="mailto:hello@ben-nour.com">Email</a> |
+    <a href="https://github.com/ben-nour">GitHub</a>
+</small></footer>
+
+    
+</body>
+
+</html>

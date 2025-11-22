@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/ben-nour/ben-n93.github.io/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=ben-nour/ben-n93.github.io/livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sending Python strings to Slack via Snowflake&#39;s notification stored procedure | Ben Nour</title>
+<meta name="title" content="Sending Python strings to Slack via Snowflake&#39;s notification stored procedure" />
+<meta name="description" content="A guide to properly formatting escape sequences so Python strings/messages are sent to Slack via Snowflake&#39;s notification service" />
+<meta name="keywords" content="SQL,Snowflake,Python,Slack," />
+
+
+<meta property="og:url" content="http://localhost:1313/ben-nour/ben-n93.github.io/blog/slack_snowflake_notification/">
+  <meta property="og:site_name" content="Ben Nour">
+  <meta property="og:title" content="Sending Python strings to Slack via Snowflake&#39;s notification stored procedure">
+  <meta property="og:description" content="A guide to properly formatting escape sequences so Python strings/messages are sent to Slack via Snowflake&#39;s notification service">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2025-11-22T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-11-22T00:00:00+00:00">
+    <meta property="article:tag" content="Sql">
+    <meta property="article:tag" content="Snowflake">
+    <meta property="article:tag" content="Python">
+    <meta property="article:tag" content="Slack">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Sending Python strings to Slack via Snowflake&#39;s notification stored procedure">
+  <meta name="twitter:description" content="A guide to properly formatting escape sequences so Python strings/messages are sent to Slack via Snowflake&#39;s notification service">
+
+
+
+
+  <meta itemprop="name" content="Sending Python strings to Slack via Snowflake&#39;s notification stored procedure">
+  <meta itemprop="description" content="A guide to properly formatting escape sequences so Python strings/messages are sent to Slack via Snowflake&#39;s notification service">
+  <meta itemprop="datePublished" content="2025-11-22T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-11-22T00:00:00+00:00">
+  <meta itemprop="wordCount" content="427">
+  <meta itemprop="keywords" content="Sql,Snowflake,Python,Slack">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  :root {
+      --width: 720px;
+      --font-main: Verdana, sans-serif;
+      --font-secondary: Verdana, sans-serif;
+      --font-scale: 1em;
+      --background-color: #fff;
+      --heading-color: #222;
+      --text-color: #444;
+      --link-color: #3273dc;
+      --visited-color:  #8b6fcb;
+      --code-background-color: #f2f2f2;
+      --code-color: #222;
+      --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+      :root {
+          --background-color: #01242e;
+          --heading-color: #eee;
+          --text-color: #ddd;
+          --link-color: #8cc2dd;
+          --visited-color:  #8b6fcb;
+          --code-background-color: #000;
+          --code-color: #ddd;
+          --blockquote-color: #ccc;
+      }
+  }
+
+  body {
+      font-family: var(--font-secondary);
+      font-size: var(--font-scale);
+      margin: auto;
+      padding: 20px;
+      max-width: var(--width);
+      text-align: left;
+      background-color: var(--background-color);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      line-height: 1.5;
+      color: var(--text-color);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-main);
+      color: var(--heading-color);
+  }
+
+  a {
+      color: var(--link-color);
+      cursor: pointer;
+      text-decoration: none;
+  }
+
+  a:hover {
+      text-decoration: underline;
+  }
+
+  nav a {
+      margin-right: 8px;
+  }
+
+  strong, b {
+      color: var(--heading-color);
+  }
+
+  button {
+      margin: 0;
+      cursor: pointer;
+  }
+
+  time {
+   	font-family: monospace;
+    	font-style: normal;
+    	font-size: 15px;
+  }
+
+  main {
+      line-height: 1.6;
+  }
+
+  table {
+      width: 100%;
+  }
+
+  hr {
+      border: 0;
+      border-top: 1px dashed;
+  }
+
+  img {
+      max-width: 100%;
+  }
+
+  code {
+      font-family: monospace;
+      padding: 2px;
+      background-color: var(--code-background-color);
+      color: var(--code-color);
+      border-radius: 3px;
+  }
+
+  blockquote {
+      border-left: 1px solid #999;
+      color: var(--code-color);
+      padding-left: 20px;
+      font-style: italic;
+  }
+
+  footer {
+      padding: 25px 0;
+      text-align: center;
+  }
+
+  .title:hover {
+      text-decoration: none;
+  }
+
+  .title h1 {
+      font-size: 1.5em;
+  }
+
+  .inline {
+      width: auto !important;
+  }
+
+  .highlight, .code {
+      padding: 1px 15px;
+      background-color: var(--code-background-color);
+      color: var(--code-color);
+      border-radius: 3px;
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+      list-style-type: none;
+      padding: unset;
+  }
+
+  ul.blog-posts li {
+      display: flex;
+  }
+
+  ul.blog-posts li span {
+      flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+      color: var(--visited-color);
+  }
+</style>
+
+</head>
+
+<body>
+  <header><a href="/ben-nour/ben-n93.github.io/" class="title">
+  <h2>Ben Nour</h2>
+</a>
+<nav><a href="/ben-nour/ben-n93.github.io/">Home</a>
+
+<a href="/ben-nour/ben-n93.github.io/projects/">Projects</a>
+
+
+<a href="/ben-nour/ben-n93.github.io/blog">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Sending Python strings to Slack via Snowflake&#39;s notification stored procedure</h1>
+<p>
+  <i>
+    <time datetime='2025-11-22'>
+      22 Nov, 2025
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>If you want to send a message to Slack via Snowflake&rsquo;s <a href="https://docs.snowflake.com/en/user-guide/notifications/snowflake-notifications">notification stored procedure</a> you need to make sure any newline characters (or other other escape sequences like <code>\t</code>) are properly formatted/escaped in order to be sent and rendered in Slack as intended.</p>
+<h3 id="sending-a-raw-string">Sending a raw string</h3>
+<p>In Snowflake, this query executes with no issue:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-SQL" data-lang="SQL"><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">SELECT</span><span style="color:#bbb"> </span><span style="color:#4070a0">&#39;Hello\nWorld&#39;</span><span style="color:#bbb"> </span>;<span style="color:#bbb">
+</span></span></span></code></pre></div><p><code>\n</code>, as you are no doubt aware, is the escape sequence for a newline character in Snowflake (and programming languages like Python).</p>
+<p>If we want to send the message <code>Hello World</code> with a newline character the following <strong>won&rsquo;t</strong> work (the message won&rsquo;t be sent):</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-SQL" data-lang="SQL"><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">CALL</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">SYSTEM</span><span style="">$</span>SEND_SNOWFLAKE_NOTIFICATION(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span>SNOWFLAKE.NOTIFICATION.TEXT_PLAIN(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>SNOWFLAKE.NOTIFICATION.SANITIZE_WEBHOOK_CONTENT(<span style="color:#4070a0">&#39;Hello\nWorld&#39;</span>)<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span>SNOWFLAKE.NOTIFICATION.INTEGRATION(<span style="color:#4070a0">&#39;example_slack_integration&#39;</span>)<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb"></span>);<span style="color:#bbb">
+</span></span></span></code></pre></div><p>Like in our earlier query, Snowflake is seeing the escape sequence and returning a literal newline character. The problem is that behind the scenes the notification stored procedure is taking the input string and converting it to a JSON object (see the <a href="https://docs.snowflake.com/sql-reference/functions/text_plain">documentation here</a>) and to represent a newline character in a JSON object you need to use the string literal <code>\n</code>. But Snowflake isn&rsquo;t passing a string literal <code>\n</code>, it&rsquo;s passing an actual newline character, breaking the function.</p>
+<p>You can see this problem demonstrated when you run the following in Snowflake:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-SQL" data-lang="SQL"><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">SELECT</span><span style="color:#bbb"> </span>PARSE_JSON(<span style="color:#4070a0">&#39;{&#34;hello&#34;: &#34;\nworld&#34;}&#39;</span>)<span style="color:#bbb"> </span>;<span style="color:#bbb">
+</span></span></span></code></pre></div><pre tabindex="0"><code>SQL Error [100069] [22P02]: Error parsing JSON: unterminated string, line 2, pos 0
+</code></pre><p>If we escape the newline character the query works:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-SQL" data-lang="SQL"><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">SELECT</span><span style="color:#bbb"> </span>PARSE_JSON(<span style="color:#4070a0">&#39;{&#34;hello&#34;: &#34;\\nworld&#34;}&#39;</span>)<span style="color:#bbb"> </span>;<span style="color:#bbb">
+</span></span></span></code></pre></div><p>As does the notification:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-SQL" data-lang="SQL"><span style="display:flex;"><span><span style="color:#007020;font-weight:bold">CALL</span><span style="color:#bbb"> </span><span style="color:#007020;font-weight:bold">SYSTEM</span><span style="">$</span>SEND_SNOWFLAKE_NOTIFICATION(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span>SNOWFLAKE.NOTIFICATION.TEXT_PLAIN(<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">    </span>SNOWFLAKE.NOTIFICATION.SANITIZE_WEBHOOK_CONTENT(<span style="color:#4070a0">&#39;Hello\\nWorld&#39;</span>)<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span>),<span style="color:#bbb">
+</span></span></span><span style="display:flex;"><span><span style="color:#bbb">  </span>SNOWFLAKE.NOTIFICATION.INTEGRATION(<span style="color:#4070a0">&#39;example_slack_integration&#39;</span>)<span style="color:#bbb">
+</span></span></span></code></pre></div><h3 id="sending-a-python-string">Sending a Python string</h3>
+<p>The same concept applies with Python however simply escaping the newline escape sequence in a raw string won&rsquo;t work:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span>spam <span style="color:#666">=</span> <span style="color:#4070a0">&#34;Hello</span><span style="color:#4070a0;font-weight:bold">\\</span><span style="color:#4070a0">nWorld&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#007020">print</span>(spam)
+</span></span></code></pre></div><p>What&rsquo;s returned:</p>
+<p><code>Hello \n World</code></p>
+<p>By including an escape character in our string we&rsquo;re ensuring that Python isn&rsquo;t intrepeting the <code>\n</code> as a literal newline character.</p>
+<p>However we still need to pass this string to Snowflake, which <em>will</em> intrepet the <code>\n</code> as a newline character and we encounter the problem mentioned above.</p>
+<p>In other words, we&rsquo;ve made sure Python knows not to print a newline character&hellip; but the resulting string (<code>Hello\nWorld</code>) will still be intrepeted by Snowflake as containing a newline character.</p>
+<p>Thankfully the solution is simple. You can use additional backslashes or you create a raw string (which tells Python not to treat backslashes as escape characters):</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-py" data-lang="py"><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Solution 1</span>
+</span></span><span style="display:flex;"><span>spam <span style="color:#666">=</span> <span style="color:#4070a0">&#34;Hello</span><span style="color:#4070a0;font-weight:bold">\\\\</span><span style="color:#4070a0">nWorld&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#60a0b0;font-style:italic"># Solution 2</span>
+</span></span><span style="display:flex;"><span>spam <span style="color:#4070a0">r</span><span style="color:#4070a0">&#34;Hello</span><span style="color:#4070a0;font-weight:bold">\\</span><span style="color:#4070a0">nWorld&#34;</span>
+</span></span></code></pre></div><p>I prefer Solution 2 as it&rsquo;s quite explicit as to what&rsquo;s being passed to Snowflake.</p>
+<p>Snowflake will see the <code>Hello\\nWorld</code> and (thanks to the backslash) will understand that the <code>\n</code> needs to be sent as is to the JSON function.</p>
+
+</content>
+<p>
+  
+  <a href="http://localhost:1313/ben-nour/ben-n93.github.io/tags/sql/">#Sql</a>
+  
+  <a href="http://localhost:1313/ben-nour/ben-n93.github.io/tags/snowflake/">#Snowflake</a>
+  
+  <a href="http://localhost:1313/ben-nour/ben-n93.github.io/tags/python/">#Python</a>
+  
+  <a href="http://localhost:1313/ben-nour/ben-n93.github.io/tags/slack/">#Slack</a>
+  
+</p>
+
+  </main>
+  <footer><small>
+    <a href="mailto:hello@ben-nour.com">Email</a> |
+    <a href="https://github.com/ben-nour">GitHub</a>
+</small></footer>
+
+    
+</body>
+
+</html>

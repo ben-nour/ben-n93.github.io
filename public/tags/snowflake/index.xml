@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Snowflake on Ben Nour</title>
-    <link>http://localhost:1313/ben-nour/ben-n93.github.io/tags/snowflake/</link>
+    <link>https://github.com/ben-nour/ben-n93.github.io/tags/snowflake/</link>
     <description>Recent content in Snowflake on Ben Nour</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 22 Nov 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/ben-nour/ben-n93.github.io/tags/snowflake/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://github.com/ben-nour/ben-n93.github.io/tags/snowflake/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Sending Python strings to Slack via Snowflake&#39;s notification stored procedure</title>
-      <link>http://localhost:1313/ben-nour/ben-n93.github.io/blog/slack_snowflake_notification/</link>
+      <link>https://github.com/ben-nour/ben-n93.github.io/blog/slack_snowflake_notification/</link>
       <pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/ben-nour/ben-n93.github.io/blog/slack_snowflake_notification/</guid>
-      <description>&lt;h2 id=&#34;sending-python-strings-to-slack-via-snowflakes-notification-stored-procedure&#34;&gt;Sending Python strings to Slack via Snowflake&amp;rsquo;s notification stored procedure&lt;/h2&gt;&#xA;&lt;p&gt;If you want to send a message to Slack via Snowflake&amp;rsquo;s &lt;a href=&#34;https://docs.snowflake.com/en/user-guide/notifications/snowflake-notifications&#34;&gt;notification stored procedure&lt;/a&gt; you need to make sure any newline characters (or other other escape sequences like &lt;code&gt;\t&lt;/code&gt;) are properly formatted/escaped in order to be sent and rendered in Slack as intended.&lt;/p&gt;&#xA;&lt;h3 id=&#34;sending-a-raw-string&#34;&gt;Sending a raw string&lt;/h3&gt;&#xA;&lt;p&gt;In Snowflake, this query executes with no issue:&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;SELECT&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;Hello\nWorld&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;;&lt;span style=&#34;color:#bbb&#34;&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;\n&lt;/code&gt;, as you are no doubt aware, is the escape sequence for a newline character.&lt;/p&gt;</description>
+      <guid>https://github.com/ben-nour/ben-n93.github.io/blog/slack_snowflake_notification/</guid>
+      <description>&lt;p&gt;If you want to send a message to Slack via Snowflake&amp;rsquo;s &lt;a href=&#34;https://docs.snowflake.com/en/user-guide/notifications/snowflake-notifications&#34;&gt;notification stored procedure&lt;/a&gt; you need to make sure any newline characters (or other other escape sequences like &lt;code&gt;\t&lt;/code&gt;) are properly formatted/escaped in order to be sent and rendered in Slack as intended.&lt;/p&gt;&#xA;&lt;h3 id=&#34;sending-a-raw-string&#34;&gt;Sending a raw string&lt;/h3&gt;&#xA;&lt;p&gt;In Snowflake, this query executes with no issue:&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;background-color:#f0f0f0;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-SQL&#34; data-lang=&#34;SQL&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#007020;font-weight:bold&#34;&gt;SELECT&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#4070a0&#34;&gt;&amp;#39;Hello\nWorld&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#bbb&#34;&gt; &lt;/span&gt;;&lt;span style=&#34;color:#bbb&#34;&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;\n&lt;/code&gt;, as you are no doubt aware, is the escape sequence for a newline character in Snowflake (and programming languages like Python).&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

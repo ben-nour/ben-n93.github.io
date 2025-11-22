@@ -2,59 +2,59 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Ben Nour</title>
-    <link>http://localhost:1313/ben-nour/ben-n93.github.io/tags/</link>
+    <link>https://github.com/ben-nour/ben-n93.github.io/tags/</link>
     <description>Recent content in Tags on Ben Nour</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 22 Nov 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/ben-nour/ben-n93.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://github.com/ben-nour/ben-n93.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Python</title>
-      <link>http://localhost:1313/ben-nour/ben-n93.github.io/tags/python/</link>
+      <link>https://github.com/ben-nour/ben-n93.github.io/tags/python/</link>
       <pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/ben-nour/ben-n93.github.io/tags/python/</guid>
+      <guid>https://github.com/ben-nour/ben-n93.github.io/tags/python/</guid>
       <description></description>
     </item>
     <item>
       <title>Slack</title>
-      <link>http://localhost:1313/ben-nour/ben-n93.github.io/tags/slack/</link>
+      <link>https://github.com/ben-nour/ben-n93.github.io/tags/slack/</link>
       <pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/ben-nour/ben-n93.github.io/tags/slack/</guid>
+      <guid>https://github.com/ben-nour/ben-n93.github.io/tags/slack/</guid>
       <description></description>
     </item>
     <item>
       <title>Snowflake</title>
-      <link>http://localhost:1313/ben-nour/ben-n93.github.io/tags/snowflake/</link>
+      <link>https://github.com/ben-nour/ben-n93.github.io/tags/snowflake/</link>
       <pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/ben-nour/ben-n93.github.io/tags/snowflake/</guid>
+      <guid>https://github.com/ben-nour/ben-n93.github.io/tags/snowflake/</guid>
       <description></description>
     </item>
     <item>
       <title>Sql</title>
-      <link>http://localhost:1313/ben-nour/ben-n93.github.io/tags/sql/</link>
+      <link>https://github.com/ben-nour/ben-n93.github.io/tags/sql/</link>
       <pubDate>Sat, 22 Nov 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/ben-nour/ben-n93.github.io/tags/sql/</guid>
+      <guid>https://github.com/ben-nour/ben-n93.github.io/tags/sql/</guid>
       <description></description>
     </item>
     <item>
       <title>Data-Analysis</title>
-      <link>http://localhost:1313/ben-nour/ben-n93.github.io/tags/data-analysis/</link>
+      <link>https://github.com/ben-nour/ben-n93.github.io/tags/data-analysis/</link>
       <pubDate>Tue, 02 Jul 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/ben-nour/ben-n93.github.io/tags/data-analysis/</guid>
+      <guid>https://github.com/ben-nour/ben-n93.github.io/tags/data-analysis/</guid>
       <description></description>
     </item>
     <item>
       <title>Tableau</title>
-      <link>http://localhost:1313/ben-nour/ben-n93.github.io/tags/tableau/</link>
+      <link>https://github.com/ben-nour/ben-n93.github.io/tags/tableau/</link>
       <pubDate>Tue, 30 Apr 2024 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/ben-nour/ben-n93.github.io/tags/tableau/</guid>
+      <guid>https://github.com/ben-nour/ben-n93.github.io/tags/tableau/</guid>
       <description></description>
     </item>
     <item>
       <title>Pandas</title>
-      <link>http://localhost:1313/ben-nour/ben-n93.github.io/tags/pandas/</link>
+      <link>https://github.com/ben-nour/ben-n93.github.io/tags/pandas/</link>
       <pubDate>Thu, 16 Nov 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/ben-nour/ben-n93.github.io/tags/pandas/</guid>
+      <guid>https://github.com/ben-nour/ben-n93.github.io/tags/pandas/</guid>
       <description></description>
     </item>
   </channel>
